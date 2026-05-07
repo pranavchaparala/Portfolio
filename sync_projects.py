@@ -24,23 +24,22 @@ def sync():
     
     # 1. GRID PRIORITY (Order on the Work page)
     GRID_PRIORITY = [
-        'echoes-of-presence',
         'clanx',
-        'unreasonablecube',
         'lectrix-ev',
+        'echoes-of-presence',
+        'unreasonablecube',
         'lunaring',
         'viewbuds',        
     ]
 
     # 2. CAROUSEL PRIORITY (Order and selection for the Home page)
     CAROUSEL_PRIORITY = [
-        
-        'lectrix-ev',
-        'oneplus',
+        'echoes-of-presence',
         'unreasonablecube',
+        'oneplus',
         'viewbuds',
+        'lectrix-ev',
         'clanx',
-        'echoes-of-presence'
     ]
     
     # Sort folders for GRID based on GRID_PRIORITY
