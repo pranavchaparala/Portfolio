@@ -17,6 +17,7 @@ const projectsData = [
         "img": "lectrix.png",
         "link": "lectrix-ev/index.html",
         "tags": [
+            "UX",
             "Product Design",
             "Branding"
         ],
@@ -50,17 +51,17 @@ const projectsData = [
         "img": "lunaring.png",
         "link": "lunaring/index.html",
         "tags": [
-            "UI/UX Design",
-            "Health Tech"
+            "UI/UX",
+            "Product Design"
         ],
         "content": "<h1>Luna Ring</h1><p>contribution to the development of Luna Ring, a health tracking device merging style with functionality.</p>"
     },
     {
         "id": "viewbuds",
         "title": "Viewbuds",
-        "img": "echoesofpresence.png",
+        "img": "viewbuds.png",
         "link": "viewbuds/index.html",
-        "tags": [],
+        "tags": ["UI/UX", "Product Design"],
         "content": "<h1>Viewbuds</h1><p>Content coming soon.</p>"
     },
     {
@@ -68,7 +69,7 @@ const projectsData = [
         "title": "Bezapp",
         "img": "bezapp.png",
         "link": "https://www.behance.net/gallery/116765115/Events-Management-App-UIUX-Design",
-        "tags": [],
+        "tags": ["UI/UX"],
         "content": "<h1>Bezapp</h1><p>Content coming soon.</p>"
     },
     {
@@ -78,7 +79,7 @@ const projectsData = [
         "link": "doodleforest/index.html",
         "tags": [
             "Creative Tech",
-            "UX"
+            "UI/UX"
         ],
         "content": "<h1>Doodle Forest</h1><p>Plant flora and spawn fauna in a generative 10x10 grid using the Google Quick Draw dataset.</p>"
     },
@@ -87,7 +88,7 @@ const projectsData = [
         "title": "Gudz",
         "img": "gudz.png",
         "link": "https://www.behance.net/gallery/186363817/Logistics-CMS-Delivery-App",
-        "tags": [],
+        "tags": ["UI/UX", "Product Design"],
         "content": "<h1>Gudz</h1><p>Content coming soon.</p>"
     },
     {
@@ -107,9 +108,7 @@ const projectsData = [
         "img": "permanenceofdecay.png",
         "link": "permanence-of-decay/index.html",
         "tags": [
-            "Physical Computing",
-            "Generative Design",
-            "Sound Synthesis"
+            "Creative Technology"
         ],
         "content": "<h1>Permanence of Decay</h1><p>An interactive system of controlled erosion reconciling our relationship to digital past through bit rot.</p>"
     }
