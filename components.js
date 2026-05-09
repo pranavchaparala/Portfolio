@@ -702,15 +702,16 @@ function initWorksTrack() {
         }
 
         // --- HORIZONTAL LOOP OPTIMIZATION ---
-        vel *= 0.94;
-        
-        // Sleep mode: stop updates if velocity is negligible and not interacting
         const isInteracting = isMouseDown || window.isPanning;
         if (Math.abs(vel) < 0.005 && !isInteracting && Math.abs(offset - lastUpdateX) < 0.1) {
             return;
         }
-        
-        offset -= vel;
+
+        // Only apply momentum if not actively dragging
+        if (!isInteracting) {
+            vel *= 0.94;
+            offset -= vel;
+        }
         
         cards.forEach((c, i) => {
             let cp = cardPos[i] + offset;
