@@ -693,6 +693,13 @@ body.page-leaving #gallery-wrap {
         left: 20px;
     }
 
+    .nav-bottom-center {
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+    }
+
     .nav-bottom-right {
         bottom: 20px;
         right: 20px;

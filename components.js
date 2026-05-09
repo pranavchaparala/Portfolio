@@ -72,7 +72,12 @@ window.addEventListener('touchstart', (e) => {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
     touchStartTime = Date.now();
+    window.isPanning = true; // Block momentum during touch
 }, { passive: true });
+
+window.addEventListener('touchend', () => {
+    window.isPanning = false; // Release momentum
+});
 
 function injectAboutModal() {
     if (document.querySelector('.about-modal')) return;
@@ -80,16 +85,13 @@ function injectAboutModal() {
         <div class="about-modal" onclick="closeAboutModal()">
             <button class="modal-close-btn" onclick="closeAboutModal()">Close [X]</button>
             <div class="about-content" onclick="event.stopPropagation()">
-                <div class="two-col-text" style="align-items: flex-end; margin-bottom: 0;">
-                    <div>
-                        <h1>Pranav Chaparala</h1>
-                        <p style="margin-bottom: 8px; font-size: 14px; line-height: 1.4;">Product Designer based in NYC currently pursuing an MFA in Design & Technology at Parsons School of Design.</p>
-                        <p style="margin-bottom: 0; font-size: 14px; line-height: 1.4; opacity: 0.8;">My work focuses on the intersection of human-centered design and emerging technologies, striving to create seamless digital experiences that solve real-world problems.</p>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end;">
-                        <span class="meta-value" style="font-size: 14px;"><a href="mailto:pranavchaparala@gmail.com" style="color: inherit; text-decoration: none;">Email ↗</a></span>
-                        <span class="meta-value" style="font-size: 14px;"><a href="https://drive.google.com/uc?export=download&id=1ry9SKoEx5cpskW3K9lFgc1BD4zF4ZJUA" target="_blank" style="color: inherit; text-decoration: none;">Resume ↗</a></span>
-                        <span class="meta-value" style="font-size: 14px;"><a href="https://linkedin.com/in/pranavchaparala" target="_blank" style="color: inherit; text-decoration: none;">LinkedIn ↗</a></span>
+                <div class="about-header" style="margin-bottom: 20px;">
+                    <h1>Pranav Chaparala</h1>
+                    <p style="margin-bottom: 12px; font-size: 14px; line-height: 1.4;">Product Designer based in NYC currently pursuing an MFA in Design & Technology at Parsons School of Design.</p>
+                    <div class="social-links-row" style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                        <a href="mailto:pranavchaparala@gmail.com" style="color: inherit; text-decoration: none; border-bottom: 1px solid rgba(0,0,0,0.2);">Email ↗</a>
+                        <a href="https://drive.google.com/uc?export=download&id=1ry9SKoEx5cpskW3K9lFgc1BD4zF4ZJUA" target="_blank" style="color: inherit; text-decoration: none; border-bottom: 1px solid rgba(0,0,0,0.2);">Resume ↗</a>
+                        <a href="https://linkedin.com/in/pranavchaparala" target="_blank" style="color: inherit; text-decoration: none; border-bottom: 1px solid rgba(0,0,0,0.2);">LinkedIn ↗</a>
                     </div>
                 </div>
 
@@ -158,8 +160,8 @@ function injectNavigation() {
     const navHTML = `
         <nav class="mobile-spatial-nav mobile-only" style="${spatialOpacityStyle}">
             <a href="${basePath}index.html" class="nav-top-left">Pranav Chaparala</a>
-            <a href="${basePath}work/index.html" class="nav-top-right ${isWork ? 'active-link' : ''}">Work</a>
-            <a href="${basePath}play/index.html" class="nav-top-center ${isPlay ? 'active-link' : ''}">Play</a>
+            <a href="${basePath}play/index.html" class="nav-top-right ${isPlay ? 'active-link' : ''}">Play</a>
+            <a href="${basePath}work/index.html" class="nav-top-center ${isWork ? 'active-link' : ''}">Work</a>
             <a href="javascript:void(0)" onclick="openAboutModal()" class="nav-bottom-left">About</a>
             <button onclick="window.toggleMute(event)" class="nav-bottom-right mute-toggle-btn">${window.isMuted ? '[ UNMUTE ]' : '[ MUTE ]'}</button>
         </nav>
@@ -167,8 +169,8 @@ function injectNavigation() {
             <a href="${basePath}index.html" class="brand">Pranav Chaparala</a>
             <div class="nav-right-links">
                 <button onclick="window.toggleMute(event)" class="mute-toggle-btn">${window.isMuted ? '[ UNMUTE ]' : '[ MUTE ]'}</button>
-                <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
                 <a href="${basePath}play/index.html" class="${isPlay ? 'active-link' : ''}">Play</a>
+                <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
                 <a href="javascript:void(0)" onclick="openAboutModal()">About</a>
             </div>
         </nav>
