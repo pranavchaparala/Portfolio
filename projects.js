@@ -4,10 +4,10 @@ const projectsData = [
         "id": "clanx",
         "title": "ClanX",
         "img": "clanx.png",
+        "gridImg": "clanx.png",
         "link": "clanx/index.html",
         "tags": [
-            "Product Design",
-            "UX"
+            "Product Design"
         ],
         "content": "<h1>ClanX</h1><p>An AI-powered recruitment platform simplifying the path from talent discovery to hire.</p>"
     },
@@ -15,10 +15,10 @@ const projectsData = [
         "id": "lectrix-ev",
         "title": "Lectrix EV",
         "img": "lectrix.png",
+        "gridImg": "lectrix.png",
         "link": "lectrix-ev/index.html",
         "tags": [
-            "Product Design",
-            "Branding"
+            "Product Design"
         ],
         "content": "<h1>Lectrix EV</h1><p>Reimaging the Lectrix app for a smarter EV scooter experience.</p>"
     },
@@ -26,9 +26,9 @@ const projectsData = [
         "id": "echoes-of-presence",
         "title": "Echoes of Presence",
         "img": "echoesofpresence.png",
+        "gridImg": "echoesofpresence.png",
         "link": "echoes-of-presence/index.html",
         "tags": [
-            "Installation",
             "Creative Tech"
         ],
         "content": "<h1>Echoes of Presence</h1><p>An evolving generative art installation reconciling our relationship to AI worlds.</p>"
@@ -37,9 +37,9 @@ const projectsData = [
         "id": "unreasonablecube",
         "title": "Unreasonable Cube",
         "img": "unreasonablecube.png",
+        "gridImg": "unreasonablecube_Claude.png",
         "link": "unreasonablecube/index.html",
         "tags": [
-            "Installation",
             "Creative Tech"
         ],
         "content": "<h1>Unreasonable Cube</h1><p>A physical AI that maps challenges to multidimensional perspectives through tangible interaction.</p>"
@@ -48,10 +48,10 @@ const projectsData = [
         "id": "lunaring",
         "title": "Luna Ring",
         "img": "lunaring.png",
+        "gridImg": "lunaring.png",
         "link": "lunaring/index.html",
         "tags": [
-            "UI/UX Design",
-            "Health Tech"
+            "Product Design"
         ],
         "content": "<h1>Luna Ring</h1><p>contribution to the development of Luna Ring, a health tracking device merging style with functionality.</p>"
     },
@@ -59,26 +59,32 @@ const projectsData = [
         "id": "viewbuds",
         "title": "Viewbuds",
         "img": "viewbuds.png",
+        "gridImg": "viewbuds.png",
         "link": "viewbuds/index.html",
-        "tags": [],
+        "tags": [
+            "Product Design"
+        ],
         "content": "<h1>Viewbuds</h1><p>Content coming soon.</p>"
     },
     {
         "id": "bezapp",
         "title": "Bezapp",
         "img": "bezapp.png",
+        "gridImg": "bezapp.png",
         "link": "https://www.behance.net/gallery/116765115/Events-Management-App-UIUX-Design",
-        "tags": [],
+        "tags": [
+            "Product Design"
+        ],
         "content": "<h1>Bezapp</h1><p>Content coming soon.</p>"
     },
     {
         "id": "doodleforest",
         "title": "Doodle Forest",
         "img": "doodleforest.png",
+        "gridImg": "doodleforest.png",
         "link": "doodleforest/index.html",
         "tags": [
-            "Creative Tech",
-            "UX"
+            "Creative Tech"
         ],
         "content": "<h1>Doodle Forest</h1><p>Plant flora and spawn fauna in a generative 10x10 grid using the Google Quick Draw dataset.</p>"
     },
@@ -86,18 +92,21 @@ const projectsData = [
         "id": "gudz",
         "title": "Gudz",
         "img": "gudz.png",
+        "gridImg": "gudz.png",
         "link": "https://www.behance.net/gallery/186363817/Logistics-CMS-Delivery-App",
-        "tags": [],
+        "tags": [
+            "Product Design"
+        ],
         "content": "<h1>Gudz</h1><p>Content coming soon.</p>"
     },
     {
         "id": "oneplus",
         "title": "OnePlus OxygenOS 12",
         "img": "oneplus.png",
+        "gridImg": "oneplus.png",
         "link": "oneplus/index.html",
         "tags": [
-            "Product Design",
-            "UI/UX"
+            "Product Design"
         ],
         "content": "<h1>OnePlus OxygenOS 12</h1><p>Enhancing the Work-Life Balance feature and system services in OxygenOS 12 at OnePlus.</p>"
     },
@@ -105,11 +114,10 @@ const projectsData = [
         "id": "permanence-of-decay",
         "title": "Permanence of Decay",
         "img": "permanenceofdecay.png",
+        "gridImg": "permanenceofdecay.png",
         "link": "permanence-of-decay/index.html",
         "tags": [
-            "Physical Computing",
-            "Generative Design",
-            "Sound Synthesis"
+            "Creative Tech"
         ],
         "content": "<h1>Permanence of Decay</h1><p>An interactive system of controlled erosion reconciling our relationship to digital past through bit rot.</p>"
     }

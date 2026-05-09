@@ -7,11 +7,18 @@ const getBasePath = () => {
     const p = window.location.pathname;
 
     // Explicit depth checks based on known subfolders
-    if (p.includes('/work/') || p.includes('/play/') || p.includes('/lectrix-ev/') ||
-        p.includes('/clanx/') || p.includes('/oneplus/') || p.includes('/lunaring/') ||
-        p.includes('/doodleforest/') || p.includes('/echoes-of-presence/') ||
-        p.includes('/unreasonablecube/') || p.includes('/viewbuds/') ||
-        p.includes('/gudz/') || p.includes('/bezapp/') || p.includes('/permanence-of-decay/')) {
+    const projectPaths = [
+        '/work', '/play', '/lectrix-ev', '/clanx', '/oneplus', 
+        '/lunaring', '/doodleforest', '/echoes-of-presence', 
+        '/unreasonablecube', '/viewbuds', '/gudz', '/bezapp', 
+        '/permanence-of-decay'
+    ];
+
+    if (projectPaths.some(path => p.includes(path + '/') || p.endsWith(path))) {
+        // Force trailing slash if missing to fix relative asset paths
+        if (projectPaths.some(path => p.endsWith(path))) {
+            window.location.replace(p + '/');
+        }
         return '../';
     }
 
@@ -47,11 +54,14 @@ window.toggleMute = function (e) {
     localStorage.setItem('siteMuted', String(window.isMuted));
     window.updateMuteUI();
     if (!window.isMuted) {
-        // Unlock audio context on unmute
         const s = new Audio();
         s.play().catch(() => { });
     }
 };
+
+/// --- HOME PAGE DETECTION ---
+const isHome = document.getElementById('stage') !== null;
+if (isHome) document.body.classList.add('home-page');
 
 // Global touch tracking for mobile interaction optimizations
 let touchStartX = 0;
@@ -148,8 +158,8 @@ function injectNavigation() {
     const navHTML = `
         <nav class="mobile-spatial-nav mobile-only" style="${spatialOpacityStyle}">
             <a href="${basePath}index.html" class="nav-top-left">Pranav Chaparala</a>
-            <a href="${basePath}work/index.html" class="nav-top-center ${isWork ? 'active-link' : ''}">Work</a>
-            <a href="${basePath}play/index.html" class="nav-top-right ${isPlay ? 'active-link' : ''}">Play</a>
+            <a href="${basePath}work/index.html" class="nav-top-right ${isWork ? 'active-link' : ''}">Work</a>
+            <a href="${basePath}play/index.html" class="nav-top-center ${isPlay ? 'active-link' : ''}">Play</a>
             <a href="javascript:void(0)" onclick="openAboutModal()" class="nav-bottom-left">About</a>
             <button onclick="window.toggleMute(event)" class="nav-bottom-right mute-toggle-btn">${window.isMuted ? '[ UNMUTE ]' : '[ MUTE ]'}</button>
         </nav>
@@ -455,7 +465,7 @@ function initWorksTrack() {
             const cp = cardPos[i] + offset;
             c.style.transform = `translate3d(${cp}px, 0, 0)`;
             const pan = c.querySelector('.pan');
-            if (pan) pan.style.transform = `translate3d(${(cp + w(i % N) / 2 - VW / 2) * 0.01}px, 0, 0)`;
+            if (pan) pan.style.transform = `translate3d(${(cp + w(i % N) / 2 - VW / 2) * 0.02}px, 0, 0)`;
         });
     }
     applyPositions(true);
@@ -495,10 +505,15 @@ function initWorksTrack() {
             gsap.set(cards, { opacity: 1 });
             spinning = true;
             blurEnabled = true;
+            document.body.classList.add('carousel-ready');
         } else {
             gsap.to(sorted, {
                 opacity: 1, duration: 0.6, stagger: 0.03, ease: 'power2.out',
-                onComplete() { spinning = true; blurEnabled = true; }
+                onComplete() { 
+                    spinning = true; 
+                    blurEnabled = true; 
+                    document.body.classList.add('carousel-ready');
+                }
             });
         }
 
@@ -545,7 +560,7 @@ function initWorksTrack() {
         });
 
         const tl = gsap.timeline({ onComplete: () => revealCarousel(false) });
-        const STEP = 0.20, IN = 0.50, HOLD = 0.10, OUT = 0.28;
+        const STEP = 0.22, IN = 0.65, HOLD = 0.15, OUT = 0.35;
 
         fakes.forEach((f, i) => {
             const t = i * STEP;
@@ -580,8 +595,8 @@ function initWorksTrack() {
         cb.remove();
     };
 
-    // WHEEL SENSITIVITY: Adjust the 0.03 to change how fast the mouse wheel scrolls (lower = slower)
-    window.addEventListener('wheel', e => { if (spinning && !isVertical) vel += e.deltaY * 0.03; });
+    // WHEEL SENSITIVITY: Adjust the 0.045 to change how fast the mouse wheel scrolls
+    window.addEventListener('wheel', e => { if (spinning && !isVertical) vel += e.deltaY * 0.045; });
 
     // --- DESKTOP MOUSE DRAG ENGINE ---
     let isMouseDown = false;
@@ -602,8 +617,10 @@ function initWorksTrack() {
         const dx = lastMouseX - e.clientX;
         dragDist += Math.abs(dx);
 
-        // DRAG SENSITIVITY: Adjust the 0.12 to change how fast the carousel moves with the mouse (lower = more weight)
-        vel += dx * 0.12;
+        // MATCH CURSOR MOVEMENT: 1:1 movement while dragging
+        offset -= dx;
+        vel = dx;
+        
         lastMouseX = e.clientX;
 
         if (dragDist > 10) window.isPanning = true;
@@ -633,8 +650,9 @@ function initWorksTrack() {
             }
         }
 
-        // Horizontal swiping sensitivity (reduced for more "friction" and control)
-        vel += dx * 0.12;
+        // Horizontal swiping: 1:1 movement
+        offset -= dx;
+        vel = dx;
 
         if (Math.abs(dx) > 2) {
             window.focusedMobileCardIndex = -1;
@@ -684,7 +702,7 @@ function initWorksTrack() {
         }
 
         // --- HORIZONTAL LOOP OPTIMIZATION ---
-        vel *= 0.88;
+        vel *= 0.94;
         
         // Sleep mode: stop updates if velocity is negligible and not interacting
         const isInteracting = isMouseDown || window.isPanning;
@@ -712,7 +730,7 @@ function initWorksTrack() {
             
             c.style.transform = `translate3d(${cp}px, 0, 0)`;
             const pan = c.querySelector('.pan');
-            if (pan) pan.style.transform = `translate3d(${(mid - viewSize / 2) * 0.01}px, 0, 0)`;
+            if (pan) pan.style.transform = `translate3d(${(mid - viewSize / 2) * 0.02}px, 0, 0)`;
 
             const diff = Math.abs(mid - viewSize / 2);
             if (diff < minDiff) {

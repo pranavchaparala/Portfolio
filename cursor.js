@@ -97,8 +97,8 @@ function initCursor() {
         points[0].x = mouse.x;
         points[0].y = mouse.y;
         for (let i = 1; i < 12; i++) {
-            points[i].x += (points[i - 1].x - points[i].x) * 0.25;
-            points[i].y += (points[i - 1].y - points[i].y) * 0.25;
+            points[i].x += (points[i - 1].x - points[i].x) * 0.35;
+            points[i].y += (points[i - 1].y - points[i].y) * 0.35;
         }
 
         cursorSq.style.transform = `translate3d(${points[0].x - 6}px, ${points[0].y - 6}px, 0)`;

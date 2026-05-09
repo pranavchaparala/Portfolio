@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work | Pranav Chaparala</title>
     <link rel="icon" type="image/png" href="../favicon.png">
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
+    <script defer src="https://cloud.umami.is/script.js"
+        data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
     <link rel="stylesheet" href="../style.css">
     <style>
         #hover-image-container {
@@ -16,10 +17,12 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            z-index: 0; /* Background layer */
+            z-index: 0;
+            /* Background layer */
             opacity: 0;
             visibility: hidden;
-            background: #ffffff; /* White background for the overlay */
+            background: #ffffff;
+            /* White background for the overlay */
             transition: opacity 0.8s ease, visibility 0.8s;
         }
 
@@ -40,7 +43,7 @@
             transform: scale(1.1);
             z-index: 1;
             /* [ADJUST OPACITY HERE] - Background blur opacity when hovering projects */
-            opacity: 0.25; 
+            opacity: 0.25;
         }
 
         /* 2. THE FLOATING PREVIEW IMAGE (for side list) */
@@ -66,7 +69,7 @@
         }
 
         /* Hide preview if src is empty (avoids broken icons or redundant pop-ups) */
-        #hover-preview[src=""], 
+        #hover-preview[src=""],
         #hover-preview:not([src]) {
             display: none !important;
         }
@@ -127,21 +130,21 @@
                 item.href = isExternal ? project.link : '../' + project.link;
                 if (isExternal) item.target = '_blank';
                 item.dataset.tags = (project.tags || []).join(',');
-                
-                const tagsHTML = (project.tags || []).map(t => 
+
+                const tagsHTML = (project.tags || []).map(t =>
                     `<span class="project-tag">${t}</span>`
                 ).join('');
 
                 item.innerHTML = `
                     <div class="grid-thumb">
-                        <img src="../covers/${project.img}" alt="${project.title}">
+                        <img src="../covers/${project.gridImg || project.img}" alt="${project.title}">
                     </div>
                     <div class="grid-info">
                         <span class="grid-title">${project.title}</span>
                         <div class="grid-tags">${tagsHTML}</div>
                     </div>
                 `;
-                
+
                 container.appendChild(item);
                 gridItems.push(item);
 
@@ -149,14 +152,14 @@
                 item.addEventListener('mouseenter', () => {
                     const isTouch = window.innerWidth <= 1024;
                     if (isTouch) return;
-                    
+
                     if (hoverBg) hoverBg.src = `../covers/${project.img}`;
                     // Clear the preview image so it doesn't pop up for grid items
                     const hoverPreview = document.getElementById('hover-preview');
-                    if (hoverPreview) hoverPreview.src = ''; 
-                    
+                    if (hoverPreview) hoverPreview.src = '';
+
                     if (hoverContainer) hoverContainer.classList.add('active');
-                    
+
                     gridItems.forEach(gi => {
                         if (gi !== item) gi.classList.add('grid-dimmed');
                     });
@@ -164,7 +167,7 @@
                 item.addEventListener('mouseleave', () => {
                     const isTouch = window.innerWidth <= 1024;
                     if (isTouch) return;
-                    
+
                     if (hoverContainer) hoverContainer.classList.remove('active');
                     gridItems.forEach(gi => gi.classList.remove('grid-dimmed'));
                 });
@@ -174,10 +177,10 @@
             filterBar.addEventListener('click', (e) => {
                 const btn = e.target.closest('.filter-btn');
                 if (!btn) return;
-                
+
                 filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
+
                 const filter = btn.dataset.filter;
 
                 // 1. Dissolve Out

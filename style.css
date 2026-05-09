@@ -7,15 +7,26 @@
     cursor: none;
 }
 
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --footer-text-color: #000000;
+    --card-bg: #f0f0f0;
+    --blur-overlay: rgba(255, 255, 255, 0.25);
+}
+
 html,
 body {
-    background-color: #ffffff;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
     font-size: 18px;
     height: 100%;
     width: 100%;
-    overflow: hidden; /* Strict lock for home page */
-    touch-action: pan-x; /* Only allow horizontal panning for the carousel */
+    overflow: hidden;
+    /* Strict lock for home page */
+    touch-action: pan-x;
+    /* Only allow horizontal panning for the carousel */
 }
 
 body {
@@ -35,6 +46,52 @@ body.loading-page footer {
     pointer-events: none !important;
 }
 
+#natural-video-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+    display: none;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 2s ease;
+}
+
+body.home-page #natural-video-bg {
+    display: block;
+}
+
+body.home-page.carousel-ready #natural-video-bg {
+    opacity: 0.3;
+}
+
+body.home-page {
+    background-color: transparent !important;
+}
+
+/* Home Page specific UI overrides */
+body.home-page .main-nav,
+body.home-page .mobile-spatial-nav a {
+    mix-blend-mode: normal !important;
+}
+
+body.home-page .main-nav a,
+body.home-page .mute-toggle-btn,
+body.home-page .mobile-spatial-nav a {
+    color: #000 !important;
+}
+
+body.home-page #bg,
+body.home-page #bg-blur {
+    display: none !important;
+}
+
+#bg, #bg-blur {
+    display: block;
+}
 
 /* --- 2. THE NAVBAR (LOCKED LOWER AT 80% - ALWAYS VISIBLE) --- */
 /* To adjust the position of the navbar, change the 'top' percentage value below.
@@ -97,20 +154,19 @@ body.loading-page footer {
     border: none;
     padding: 0;
     color: #fff;
+    font-family: inherit;
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    cursor: pointer;
-    font-family: inherit;
+    cursor: none;
     transition: opacity 0.2s ease;
     white-space: nowrap;
 }
 
-@media (hover: hover) {
-    .mute-toggle-btn:hover {
-        opacity: 0.4;
-    }
+.mute-toggle-btn:hover,
+.theme-toggle-btn:hover {
+    opacity: 0.4;
 }
 
 /* --- 3. GLOBAL DISSOLVE ANIMATION (SLOWED DOWN) --- */
@@ -118,7 +174,6 @@ body.loading-page footer {
     from {
         opacity: 0;
         transform: translateY(10px);
-        /* Slightly deeper slide */
     }
 
     to {
@@ -172,14 +227,14 @@ body.loading-page footer {
 .card {
     position: absolute;
     top: 45%;
-    background: #f0f0f0;
+    background: var(--card-bg);
     overflow: hidden;
     opacity: 0;
     pointer-events: auto;
     transition: opacity 0.3s, background 0.3s, border 0.3s;
     will-change: transform, opacity;
     backface-visibility: hidden;
-    transform: translate3d(0,0,0);
+    transform: translate3d(0, 0, 0);
 }
 
 .card.p {
@@ -235,7 +290,7 @@ body.loading-page footer {
 
 .fake {
     position: absolute;
-    background: #f0f0f0;
+    background: var(--card-bg);
     overflow: hidden;
     left: 50%;
     top: 45%;
@@ -295,7 +350,7 @@ footer {
     font-weight: 600;
     letter-spacing: 0.05em;
     line-height: 1.4;
-    color: #000000;
+    color: var(--footer-text-color);
     max-width: 600px;
     text-align: left;
 }
@@ -305,7 +360,7 @@ footer {
     font-weight: 600;
     letter-spacing: 0.05em;
     line-height: 1.4;
-    color: #000000;
+    color: var(--footer-text-color);
     text-align: right;
 }
 
@@ -325,7 +380,7 @@ footer {
     text-align: center;
     font-size: 18px;
     font-weight: 500;
-    color: #000;
+    color: var(--text-color);
     z-index: 10000;
     opacity: 0;
     transition: opacity 0.5s ease;
@@ -399,19 +454,23 @@ body.page-loaded #active-project-title {
 }
 
 /* --- 6. PHYSICS CURSOR --- */
-#cursor-svg {
+#cursor-svg, #cursor-square-loader {
+    mix-blend-mode: difference;
+    pointer-events: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    z-index: 200000; /* Increased to stay above the About modal (100k) */
+}
+
+#cursor-svg {
+    z-index: 200000;
 }
 
 #thread-path {
     fill: none;
-    stroke: black;
+    stroke: #fff;
     stroke-width: 1.2;
     stroke-linecap: round;
 }
@@ -419,11 +478,7 @@ body.page-loaded #active-project-title {
 #cursor-square-loader {
     width: 12px;
     height: 12px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 200001; /* Higher than the SVG path */
+    z-index: 200001;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -433,8 +488,8 @@ body.page-loaded #active-project-title {
 .loader-rect {
     width: 12px;
     height: 12px;
-    border: 1.5px solid black;
-    background: rgba(0, 0, 0, 0.2);
+    border: 1.5px solid #fff;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 0px;
     transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
         height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
@@ -445,7 +500,7 @@ body.page-loaded #active-project-title {
 }
 
 body.loaded .loader-rect {
-    background-color: black;
+    background-color: #fff;
 }
 
 #open-project-label {
@@ -471,10 +526,21 @@ body.loaded .loader-rect {
 
 /* --- CURSOR HINT (scroll/drag to explore) --- */
 @keyframes cursorHintBreathe {
-    0%   { opacity: 0; }
-    25%  { opacity: 1; }
-    75%  { opacity: 1; }
-    100% { opacity: 0; }
+    0% {
+        opacity: 0;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }
 
 #cursor-hint {
@@ -487,8 +553,7 @@ body.loaded .loader-rect {
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #fff;
-    mix-blend-mode: difference;
+    color: #000;
     white-space: nowrap;
     opacity: 0;
     will-change: transform, opacity;
@@ -499,7 +564,9 @@ body.loaded .loader-rect {
 }
 
 @media (hover: none) and (pointer: coarse) {
-    #cursor-hint { display: none !important; }
+    #cursor-hint {
+        display: none !important;
+    }
 }
 
 /* --- 7. PAGE TRANSITIONS --- */
@@ -812,10 +879,10 @@ body.page-leaving #gallery-wrap {
 /* Filter Bar */
 .filter-bar {
     display: flex;
+    justify-content: center;
     gap: 12px;
-    padding: 60px 40px 0 40px;
-    margin-left: 350px;
-    width: calc(100% - 350px);
+    padding: 80px 40px 0 40px;
+    width: 100%;
     flex-wrap: wrap;
     position: relative;
     z-index: 2;
@@ -826,16 +893,13 @@ body.page-leaving #gallery-wrap {
     .filter-bar {
         margin-left: 0;
         width: 100%;
-        padding: 80px 16px 0 16px;
+        padding: 60px 16px 0 16px;
         gap: 4px;
         /* Bring them closer */
-        justify-content: flex-start;
-        /* Explicitly left align */
+        justify-content: center;
     }
 
     .filter-btn {
-        margin-right: 8px !important;
-        /* Overriding the massive 18px margin from desktop */
         padding: 10px 4px !important;
         touch-action: manipulation;
     }
@@ -846,7 +910,6 @@ body.page-leaving #gallery-wrap {
     border: none;
     padding: 12px 6px;
     /* Increased vertical padding for touch */
-    margin-right: 18px;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -854,18 +917,19 @@ body.page-leaving #gallery-wrap {
     cursor: pointer;
     transition: color 0.2s ease;
     font-family: inherit;
-    color: #999;
+    color: var(--text-color);
     /* Make the interactive area larger without shifting layout */
     margin-top: -6px;
     margin-bottom: -6px;
+    opacity: 0.5;
 }
 
 .filter-btn:hover {
-    color: #000;
+    opacity: 1;
 }
 
 .filter-btn.active {
-    color: #000;
+    opacity: 1;
 }
 
 .project-grid {
@@ -940,10 +1004,10 @@ body.page-leaving #gallery-wrap {
 }
 
 .grid-title {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    color: var(--text-color);
+    letter-spacing: -0.01em;
 }
 
 .grid-tags {
@@ -967,9 +1031,11 @@ body.page-leaving #gallery-wrap {
     background: rgba(255, 255, 255, 0.98);
     z-index: 100000;
     display: flex;
-    align-items: center; /* Vertically centered for no-scroll balanced look */
+    align-items: center;
+    /* Vertically centered for no-scroll balanced look */
     justify-content: center;
-    padding: 20px; /* Tighter padding for mobile/small screens */
+    padding: 20px;
+    /* Tighter padding for mobile/small screens */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.6s ease, visibility 0.6s;
@@ -986,31 +1052,37 @@ body.page-leaving #gallery-wrap {
 
 .about-content {
     width: 100%;
-    max-width: 900px; /* Slightly wider to accommodate 3 columns */
+    max-width: 900px;
+    /* Slightly wider to accommodate 3 columns */
     text-align: left;
     will-change: transform, opacity;
-    transform: translate3d(0,0,0);
+    transform: translate3d(0, 0, 0);
 }
 
 .about-content h1 {
-    font-size: 28px; /* Slightly smaller for density */
+    font-size: 28px;
+    /* Slightly smaller for density */
     text-transform: none;
     letter-spacing: -0.01em;
-    margin-bottom: 12px; /* Tighter */
+    margin-bottom: 12px;
+    /* Tighter */
     font-weight: 500;
 }
 
 .about-content h2 {
-    font-size: 12px; /* Smaller labels */
+    font-size: 12px;
+    /* Smaller labels */
     font-weight: 600;
     text-transform: uppercase;
-    margin: 30px 0 12px; /* Tighter */
+    margin: 30px 0 12px;
+    /* Tighter */
     letter-spacing: 0.05em;
     color: #707070;
 }
 
 .about-content p {
-    font-size: 16px; /* Slightly smaller for density */
+    font-size: 16px;
+    /* Slightly smaller for density */
     line-height: 1.5;
     margin-bottom: 12px;
 }
@@ -1019,7 +1091,8 @@ body.page-leaving #gallery-wrap {
     border: none;
     height: 1px;
     background: rgba(0, 0, 0, 0.08);
-    margin: 25px 0; /* Tighter */
+    margin: 25px 0;
+    /* Tighter */
 }
 
 .about-content .three-col-text {
@@ -1043,33 +1116,45 @@ body.page-leaving #gallery-wrap {
 
 @media (max-width: 900px) {
     .about-modal {
-        padding: 40px 10px; /* Even tighter padding */
+        padding: 40px 10px;
+        /* Even tighter padding */
     }
+
     .about-content {
-        width: 90%; /* Fixed: Ensuring background is visible for tap-to-close */
+        width: 90%;
+        /* Fixed: Ensuring background is visible for tap-to-close */
         max-width: 400px;
         padding: 0;
     }
+
     .about-content h1 {
         font-size: 24px;
         margin-bottom: 8px;
     }
+
     .about-content p {
-        font-size: 12px; /* Tighter text */
+        font-size: 12px;
+        /* Tighter text */
         line-height: 1.4;
         margin-bottom: 8px;
     }
+
     .about-content h2 {
-        margin: 15px 0 8px; /* Tighter headers */
+        margin: 15px 0 8px;
+        /* Tighter headers */
         font-size: 11px;
     }
+
     .about-content hr {
         margin: 15px 0;
     }
+
     .about-content .three-col-text,
     .about-content .two-col-text {
-        grid-template-columns: 1fr 1fr; /* Switched from 1fr to avoid long scrolls */
-        gap: 12px 20px; /* Tighter grid gaps */
+        grid-template-columns: 1fr 1fr;
+        /* Switched from 1fr to avoid long scrolls */
+        gap: 12px 20px;
+        /* Tighter grid gaps */
     }
 }
 
@@ -1078,7 +1163,8 @@ body.page-leaving #gallery-wrap {
     position: absolute;
     top: 20px;
     right: 20px;
-    font-size: 11px; /* Matched to mobile nav size */
+    font-size: 11px;
+    /* Matched to mobile nav size */
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -1090,7 +1176,8 @@ body.page-leaving #gallery-wrap {
     opacity: 0.4;
     transition: opacity 0.2s ease;
     z-index: 100001;
-    font-family: inherit; /* Ensure same font as site */
+    font-family: inherit;
+    /* Ensure same font as site */
 }
 
 .modal-hint {
@@ -1099,7 +1186,8 @@ body.page-leaving #gallery-wrap {
 
 @media (max-width: 900px) {
     .modal-hint {
-        display: none !important; /* Remove click anywhere on mobile */
+        display: none !important;
+        /* Remove click anywhere on mobile */
     }
 }
 
@@ -1127,6 +1215,7 @@ body.page-leaving #gallery-wrap {
     .about-modal {
         padding: 60px 20px;
     }
+
     .about-content .two-col-text {
         grid-template-columns: 1fr;
         gap: 24px;

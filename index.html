@@ -8,7 +8,8 @@
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link rel="icon" type="image/png" href="favicon.png">
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
+    <script defer src="https://cloud.umami.is/script.js"
+        data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -22,7 +23,17 @@
             MFA in Design & Technology at Parsons School of Design.<br>Past: DigitalOcean, OnePlus & Noise.</span>
         <span class="footer-right">New York City<br><span id="clock">00:00:00</span></span>
     </footer>
-    
+
+    <video id="natural-video-bg" autoplay muted loop playsinline preload="auto">
+        <source src="background.mp4" type="video/mp4">
+    </video>
+    <script>
+        // Force play on first interaction if autoplay is blocked
+        document.addEventListener('click', function () {
+            var v = document.getElementById('natural-video-bg');
+            if (v && v.paused) v.play();
+        }, { once: true });
+    </script>
     <script src="projects.js"></script>
     <script src="cursor.js"></script>
     <script src="components.js?v=5"></script>

@@ -65,6 +65,7 @@ def sync():
             
         title = extract_title(content)
         img = extract_meta(content, 'project-img')
+        grid_img = extract_meta(content, 'project-grid-img')
         tags_raw = extract_meta(content, 'project-tags')
         tags = [t.strip() for t in tags_raw.split(',')] if tags_raw else []
         description = extract_meta(content, 'project-description') or "Content coming soon."
@@ -83,6 +84,7 @@ def sync():
             "id": folder,
             "title": title,
             "img": img,
+            "gridImg": grid_img if grid_img else img,
             "link": external_link if external_link else f"{folder}/index.html",
             "tags": tags,
             "content": f"<h1>{title}</h1><p>{description}</p>"
