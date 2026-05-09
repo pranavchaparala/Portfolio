@@ -279,44 +279,49 @@
 
         /* --- 5. CURSOR STYLES --- */
         #cursor-svg {
+            mix-blend-mode: difference;
+            pointer-events: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 1000000;
+        }
+
+        #cursor-square-loader {
+            mix-blend-mode: difference;
             pointer-events: none;
-            z-index: 9999;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 12px;
+            height: 12px;
+            z-index: 1000001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            will-change: transform;
         }
 
         #thread-path {
             fill: none;
-            stroke: black;
+            stroke: #fff;
             stroke-width: 1.2;
             stroke-linecap: round;
         }
 
-        #cursor-square-loader {
-            width: 14px;
-            height: 14px;
-            position: fixed;
-            pointer-events: none;
-            z-index: 10000;
-            transform: translate(-50%, -50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
 
         .loader-rect {
             width: 12px;
             height: 12px;
-            border: 1.5px solid black;
+            border: 1.5px solid #fff;
             background: transparent;
             transition: background-color 0.8s ease;
         }
 
         body.loaded .loader-rect {
-            background-color: black;
+            background-color: #fff;
         }
 
         #open-project-label {
@@ -478,8 +483,8 @@
                 margin-bottom: 20px !important;
             }
 
-            /* Ensure all navigational overlays and custom cursors explicitly un-render */
-            .nav-rail, .top-nav-fade, #cursor-svg, #cursor-square-loader, .back-btn-center {
+            /* Ensure all navigational overlays explicitly un-render on touch, but keep cursor potential */
+            .nav-rail, .top-nav-fade, .back-btn-center {
                 display: none !important;
             }
 
