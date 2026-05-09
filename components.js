@@ -72,11 +72,16 @@ window.addEventListener('touchstart', (e) => {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
     touchStartTime = Date.now();
-    window.isPanning = true; // Block momentum during touch
+    window.isTouching = true; 
+    window.isPanning = false; 
 }, { passive: true });
 
 window.addEventListener('touchend', () => {
-    window.isPanning = false; // Release momentum
+    window.isTouching = false;
+    // Maintain isPanning briefly to block potential ghost clicks if it was a drag
+    if (window.isPanning) {
+        setTimeout(() => { window.isPanning = false; }, 100);
+    }
 });
 
 function injectAboutModal() {
@@ -372,31 +377,9 @@ function initWorksTrack() {
                         window.location.href = target;
                     }, 400);
                     return;
-                }
-
-                // --- MOBILE TWO-TAP FOCUS ---
-                if (isMobile) {
-                    const mid = cardPos[ci] + offset + size / 2;
-                    const isCentered = Math.abs(mid - VW / 2) < 40;
-
-                    if (window.focusedMobileCardIndex !== ci && !isCentered) {
-                        window.focusedMobileCardIndex = ci;
-                        vel = 0;
-                        const targetOffset = VW / 2 - (cardPos[ci] + size / 2);
-                        let proxy = { o: offset };
-
-                        gsap.to(proxy, {
-                            o: targetOffset,
-                            duration: 0.5,
-                            ease: 'power2.out',
-                            onUpdate: () => { offset = proxy.o; }
-                        });
-
-                        titleEl.innerHTML = `<div class="project-subheading">Selected Work</div>${work.title}`;
-                        gsap.to(titleEl, { opacity: 1, duration: 0.3 });
-                        return; // Block navigation on first tap
-                    }
-                }
+                    // Mobile single-tap navigation is now standard.
+                // Dynamic title updates are handled in the main loop.
+             }
                 // -----------------------------
 
                 // Skip centering — navigate directly on click
@@ -603,7 +586,8 @@ function initWorksTrack() {
     // --- DESKTOP MOUSE DRAG ENGINE ---
     let isMouseDown = false;
     let lastMouseX = 0;
-    window.isPanning = false; // Shared flag to block clicks during/after drag
+    window.isPanning = false; // Flag to block clicks after a drag
+    window.isTouching = false; // Flag to signal active interaction to physics engine
     let dragDist = 0;
 
     window.addEventListener('mousedown', e => {
@@ -656,7 +640,8 @@ function initWorksTrack() {
         offset -= dx;
         vel = dx;
 
-        if (Math.abs(dx) > 2) {
+        if (Math.abs(dx) > 10) {
+            window.isPanning = true;
             window.focusedMobileCardIndex = -1;
             if (isMobile && titleEl) gsap.to(titleEl, { opacity: 0, duration: 0.2 });
         }
@@ -704,7 +689,7 @@ function initWorksTrack() {
         }
 
         // --- HORIZONTAL LOOP OPTIMIZATION ---
-        const isInteracting = isMouseDown || window.isPanning;
+        const isInteracting = isMouseDown || window.isTouching;
         if (Math.abs(vel) < 0.005 && !isInteracting && Math.abs(offset - lastUpdateX) < 0.1) {
             return;
         }
@@ -748,8 +733,12 @@ function initWorksTrack() {
             if (window.lastHapticIdx !== undefined && Math.abs(vel) > 0.5) triggerHaptic();
             window.lastHapticIdx = currentCenterIdx;
 
-            if (Math.abs(vel) < 2) {
-                window.focusedMobileCardIndex = currentCenterIdx;
+            const work = carouselWorks[currentCenterIdx % N];
+            if (titleEl && titleEl.dataset.currentTitle !== work.title) {
+                titleEl.dataset.currentTitle = work.title;
+                titleEl.innerHTML = `<div class="project-subheading">Selected Work</div>${work.title}`;
+                gsap.to(titleEl, { opacity: 1, duration: 0.3 });
+                if (bgImg) bgImg.src = `${basePath}covers/${work.img}`;
             }
         }
     }());
