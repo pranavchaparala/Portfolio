@@ -5,7 +5,7 @@ const projectsData = [
         "title": "ClanX",
         "img": "clanx.png",
         "gridImg": "clanx.png",
-        "link": "clanx/index.html",
+        "link": "clanx/",
         "tags": [
             "Product Design"
         ],
@@ -16,7 +16,7 @@ const projectsData = [
         "title": "Lectrix EV",
         "img": "lectrix.png",
         "gridImg": "lectrix.png",
-        "link": "lectrix-ev/index.html",
+        "link": "lectrix-ev/",
         "tags": [
             "Product Design"
         ],
@@ -27,29 +27,29 @@ const projectsData = [
         "title": "Echoes of Presence",
         "img": "echoesofpresence.png",
         "gridImg": "echoesofpresence.png",
-        "link": "echoes-of-presence/index.html",
+        "link": "echoes-of-presence/",
         "tags": [
             "Creative Tech"
         ],
-        "content": "<h1>Echoes of Presence</h1><p>An evolving generative art installation reconciling our relationship to AI worlds.</p>"
+        "content": "<h1>Echoes of Presence</h1><p>Content coming soon.</p>"
     },
     {
         "id": "unreasonablecube",
         "title": "Unreasonable Cube",
         "img": "unreasonablecube.png",
         "gridImg": "unreasonablecube_Claude.png",
-        "link": "unreasonablecube/index.html",
+        "link": "unreasonablecube/",
         "tags": [
             "Creative Tech"
         ],
-        "content": "<h1>Unreasonable Cube</h1><p>A physical AI that maps challenges to multidimensional perspectives through tangible interaction.</p>"
+        "content": "<h1>Unreasonable Cube</h1><p>Content coming soon.</p>"
     },
     {
         "id": "lunaring",
         "title": "Luna Ring",
         "img": "lunaring.png",
         "gridImg": "lunaring.png",
-        "link": "lunaring/index.html",
+        "link": "lunaring/",
         "tags": [
             "Product Design"
         ],
@@ -58,9 +58,9 @@ const projectsData = [
     {
         "id": "viewbuds",
         "title": "Viewbuds",
-        "img": "viewbuds.png",
-        "gridImg": "viewbuds.png",
-        "link": "viewbuds/index.html",
+        "img": "echoesofpresence.png",
+        "gridImg": "echoesofpresence.png",
+        "link": "viewbuds/",
         "tags": [
             "Product Design"
         ],
@@ -82,7 +82,7 @@ const projectsData = [
         "title": "Doodle Forest",
         "img": "doodleforest.png",
         "gridImg": "doodleforest.png",
-        "link": "doodleforest/index.html",
+        "link": "doodleforest/",
         "tags": [
             "Creative Tech"
         ],
@@ -104,7 +104,7 @@ const projectsData = [
         "title": "OnePlus OxygenOS 12",
         "img": "oneplus.png",
         "gridImg": "oneplus.png",
-        "link": "oneplus/index.html",
+        "link": "oneplus/",
         "tags": [
             "Product Design"
         ],
@@ -115,7 +115,7 @@ const projectsData = [
         "title": "Permanence of Decay",
         "img": "permanenceofdecay.png",
         "gridImg": "permanenceofdecay.png",
-        "link": "permanence-of-decay/index.html",
+        "link": "permanence-of-decay/",
         "tags": [
             "Creative Tech"
         ],

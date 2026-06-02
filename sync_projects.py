@@ -85,7 +85,7 @@ def sync():
             "title": title,
             "img": img,
             "gridImg": grid_img if grid_img else img,
-            "link": external_link if external_link else f"{folder}/index.html",
+            "link": external_link if external_link else f"{folder}/",
             "tags": tags,
             "content": f"<h1>{title}</h1><p>{description}</p>"
         })

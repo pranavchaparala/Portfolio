@@ -148,7 +148,7 @@ window.closeAboutModal = function () {
 
 function injectNavigation() {
     const pathname = window.location.pathname;
-    const isIndex = (pathname.endsWith('index.html') || pathname.endsWith('/') || pathname === '' || pathname.endsWith('portfolioagain')) && !pathname.includes('/projects/') && !pathname.includes('/work/') && !pathname.includes('/play/') && !pathname.includes('/about/');
+    const isIndex = document.getElementById('stage') !== null;
     const isWork = pathname.includes('/work/');
     const isPlay = pathname.includes('/play/');
     const isResearch = pathname.includes('/research/');
@@ -164,18 +164,18 @@ function injectNavigation() {
 
     const navHTML = `
         <nav class="mobile-spatial-nav mobile-only" style="${spatialOpacityStyle}">
-            <a href="${basePath}index.html" class="nav-top-left">Pranav Chaparala</a>
-            <a href="${basePath}play/index.html" class="nav-top-right ${isPlay ? 'active-link' : ''}">Play</a>
-            <a href="${basePath}work/index.html" class="nav-top-center ${isWork ? 'active-link' : ''}">Work</a>
+            <a href="${basePath}" class="nav-top-left">Pranav Chaparala</a>
+            <a href="${basePath}play/" class="nav-top-right ${isPlay ? 'active-link' : ''}">Play</a>
+            <a href="${basePath}work/" class="nav-top-center ${isWork ? 'active-link' : ''}">Work</a>
             <a href="javascript:void(0)" onclick="openAboutModal()" class="nav-bottom-left">About</a>
             <button onclick="window.toggleMute(event)" class="nav-bottom-right mute-toggle-btn">${window.isMuted ? '[ UNMUTE ]' : '[ MUTE ]'}</button>
         </nav>
         <nav class="main-nav desktop-only" style="${inlineStyle}">
-            <a href="${basePath}index.html" class="brand">Pranav Chaparala</a>
+            <a href="${basePath}" class="brand">Pranav Chaparala</a>
             <div class="nav-right-links">
                 <button onclick="window.toggleMute(event)" class="mute-toggle-btn">${window.isMuted ? '[ UNMUTE ]' : '[ MUTE ]'}</button>
-                <a href="${basePath}play/index.html" class="${isPlay ? 'active-link' : ''}">Play</a>
-                <a href="${basePath}work/index.html" class="${isWork ? 'active-link' : ''}">Work</a>
+                <a href="${basePath}play/" class="${isPlay ? 'active-link' : ''}">Play</a>
+                <a href="${basePath}work/" class="${isWork ? 'active-link' : ''}">Work</a>
                 <a href="javascript:void(0)" onclick="openAboutModal()">About</a>
             </div>
         </nav>
@@ -807,7 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initWorksList();
     injectAboutModal();
 
-    const isIndex = (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/') || window.location.pathname === '' || window.location.pathname.endsWith('portfolioagain')) && !window.location.pathname.includes('/projects/') && !window.location.pathname.includes('/work/') && !window.location.pathname.includes('/play/') && !window.location.pathname.includes('/about/');
+    const isIndex = document.getElementById('stage') !== null;
     if (isIndex && !sessionStorage.getItem('portfolio_visited')) {
         document.body.classList.add('loading-page');
     }
