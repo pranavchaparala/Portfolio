@@ -119,7 +119,7 @@ const projectsData = [
         "tags": [
             "Creative Tech"
         ],
-        "content": "<h1>Permanence of Decay</h1><p>An interactive system of controlled erosion reconciling our relationship to digital past through bit rot.</p>"
+        "content": "<h1>Permanence of Decay</h1><p>Permanence of Decay challenges our culture of infinite digital storage by treating data like a mortal, living thing. While computers normally act as permanent vaults, this installation introduces a finite lifespan to a photographic archive, causing images to age and break down over time.</p>"
     }
 ];
 const carouselOrder = ["echoes-of-presence", "unreasonablecube", "oneplus", "viewbuds", "lectrix-ev", "clanx"];
