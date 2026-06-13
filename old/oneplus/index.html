@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQ1FRLB07W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-ZQ1FRLB07W');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnePlus OxygenOS 12 | Pranav Chaparala</title>
+    <meta name="description" content="Enhancing the Work-Life Balance feature and system services in OxygenOS 12 at OnePlus.">
+    <meta property="og:title" content="OnePlus OxygenOS 12 | Pranav Chaparala">
+    <meta property="og:description" content="Enhancing the Work-Life Balance feature and system services in OxygenOS 12 at OnePlus....">
+    <meta property="og:image" content="https://pranavchaparala.com/covers/oneplus.png">
+    <meta property="og:url" content="https://pranavchaparala.com/oneplus/">
+    <meta name="twitter:card" content="summary_large_image">
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../project.css">
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <meta name="project-img" content="oneplus.png">
+    <meta name="project-tags" content="Product Design">
+    <meta name="project-description" content="Enhancing the Work-Life Balance feature and system services in OxygenOS 12 at OnePlus.">
+    <meta name="project-year" content="2021">
+</head>
+<body>
+    <a href="../" class="back-btn-center"><span>←</span> Go Back</a>
+    <nav id="work-list">
+        <span class="section-label">Work</span>
+        <ul></ul>
+    </nav>
+
+    <div class="page-content">
+        <main id="main-content">
+            <div class="case-study-container long-scroll" id="project-container">
+                <h1>OxygenOS 12</h1>
+                <p class="body-text">
+                    During my time at OnePlus, I played a key role in enhancing the Work-Life Balance feature in OxygenOS 12. My focus was on simplifying the user flow and refining the design language to create a more intuitive, user-friendly experience.
+                </p>
+                <p class="body-text" style="opacity: 0.5; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    Design Process and Iterations are confidential.
+                </p>
+
+                <div class="meta-grid">
+                    <span class="meta-label">Year</span>
+                    <span class="meta-value">2021</span>
+                    <span class="meta-label">Client</span>
+                    <span class="meta-value">OnePlus</span>
+                    <span class="meta-label">Team</span>
+                    <span class="meta-value">OnePlus India Design</span>
+                </div>
+
+                <hr>
+
+                <h2>REIMAGINING WORK LIFE BALANCE</h2>
+                <p class="body-text">
+                    Work-Life Balance 2.0 aimed to help users balance work and personal life. The first version had issues with distractions, tricky setup, and limited customization. We redesigned it to make switching between work and life smoother and more intuitive.
+                </p>
+
+                <div class="media-row">
+                    <img src="assets/1.png" alt="OxygenOS 11 Version">
+                    <img src="assets/2.png" alt="OxygenOS 12 New Design">
+                </div>
+
+                <hr>
+
+                <h2>SHELF</h2>
+                <p class="body-text">
+                    Discover customizable options with seamless OnePlus Watch and Buds integration. Access your digital life effortlessly with at-a-glance cards for weather, step counter, and headset control.
+                </p>
+                <img src="assets/3.png" alt="OnePlus Shelf">
+
+                <hr>
+
+                <h2>SCOUT</h2>
+                <p class="body-text">
+                    OnePlus Scout on OxygenOS is your one-stop search hub. Find anything on your phone directly from the app drawer, now with voice search for quicker results.
+                </p>
+                <img src="assets/4.png" alt="OnePlus Scout">
+
+            </div>
+        </main>
+    </div>
+
+    <div class="nav-rail" id="rail">
+        <div id="scroll-indicator"></div>
+        <div id="mini-map-content"></div>
+    </div>
+
+    <script src="../projects.js"></script>
+    <script src="../cursor.js"></script>
+    <script src="../components.js?v=2"></script>
+    <script>
+        const lenis = new Lenis({ duration: 1.2, lerp: 0.1 });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        const mainContent = document.getElementById('main-content');
+        const miniMap = document.getElementById('mini-map-content');
+        const indicator = document.getElementById('scroll-indicator');
+        const rail = document.getElementById('rail');
+        miniMap.appendChild(mainContent.cloneNode(true));
+
+        function syncLayout() {
+            const pageHeight = mainContent.scrollHeight;
+            const scaleFactor = rail.clientWidth / window.innerWidth;
+            miniMap.style.transform = `scale(${scaleFactor})`;
+            rail.style.height = `${Math.min(pageHeight * scaleFactor, window.innerHeight * 0.5)}px`;
+            indicator.style.height = `${rail.clientHeight * (window.innerHeight / pageHeight)}px`;
+        }
+        const resizeObserver = new ResizeObserver(() => syncLayout());
+        resizeObserver.observe(mainContent);
+        window.addEventListener('load', () => { syncLayout(); setTimeout(syncLayout, 500); });
+        window.addEventListener('resize', syncLayout);
+        syncLayout();
+
+        lenis.on('scroll', (e) => {
+            const scrollPercent = e.progress;
+            indicator.style.transform = `translateY(${scrollPercent * (rail.clientHeight - indicator.clientHeight)}px)`;
+            const scaleFactor = rail.clientWidth / window.innerWidth;
+            const scaledHeight = mainContent.scrollHeight * scaleFactor;
+            if (scaledHeight > rail.clientHeight) {
+                miniMap.style.top = `-${(scaledHeight - rail.clientHeight) * scrollPercent}px`;
+            }
+        });
+    </script>
+</body>
+</html>
