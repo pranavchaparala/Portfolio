@@ -300,7 +300,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         overlayContainer.classList.remove('expanded');
         overlayContainer.classList.add('active');
-        if (modalSheet) modalSheet.scrollTop = 0;
+        if (modalSheet) {
+            modalSheet.scrollTop = 0;
+            requestAnimationFrame(() => { modalSheet.scrollTop = 0; });
+        }
         document.body.style.overflow = 'hidden';
 
         if (typeof umami !== 'undefined') umami.track('project-view', { project: slug, title: project.title });

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <style>
+    .bar {
+      width: 20px;
+      height: 60px;
+      rx: 10px; /* Perfectly rounds the 20px wide pills */
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+    
+    /* Order of colors based on your video's transition */
+    .bar-1 { animation-delay: 0s; }
+    .bar-2 { animation-delay: 0.5s; }
+    .bar-3 { animation-delay: 1s; }
+
+    @keyframes pulse {
+      0%, 100% {
+        fill: #4d4d4d; /* Medium Gray */
+      }
+      33% {
+        fill: #333333; /* Dark Gray */
+      }
+      66% {
+        fill: #cccccc; /* Light Gray */
+      }
+    }
+  </style>
+
+  <g transform="translate(28, 34)">
+    <rect class="bar bar-1" x="0" y="0" />
+    <rect class="bar bar-2" x="26" y="0" /> <rect class="bar bar-3" x="52" y="0" /> </g>
+</svg>

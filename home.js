@@ -45,9 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
             card.appendChild(caption);
 
             card.addEventListener('click', () => {
-                if (typeof window.openCaseStudy === 'function') {
-                    window.openCaseStudy(proj.id);
-                }
+                if (document.body.classList.contains('page-leaving')) return;
+                document.body.classList.add('page-leaving');
+                setTimeout(() => {
+                    window.location.href = `projects.html?p=${proj.id}`;
+                }, 200);
             });
 
             projectsCarousel.appendChild(card);

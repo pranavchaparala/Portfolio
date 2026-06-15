@@ -2,12 +2,15 @@
     const container = document.getElementById('pm-container');
     if (!container) return;
 
+    const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
+
     // Create elements
     const wrap = document.createElement('div');
     wrap.id = 'pm-wrap';
-    wrap.style.cssText = 'position:relative;cursor:none;width:100%;height:100%;';
+    wrap.style.cssText = 'position:relative;width:100%;height:100%;overflow:hidden;' + (isMobile ? '' : 'cursor:none;');
     const outC = document.createElement('canvas');
     outC.id = 'pm-out';
+    outC.style.display = 'block';
     wrap.appendChild(outC);
     container.appendChild(wrap);
 
@@ -33,46 +36,51 @@
     const hirX = hirC.getContext('2d', { willReadFrequently: true });
     const outX = outC.getContext('2d');
 
-    let mx = -9999, my = -9999, lensAlpha = 0, COLS = 120, ASP = 3, GAP = 2, LENS = 200, running = false;
+    let mx = -9999, my = -9999, lensAlpha = 0;
+    const COLS = isMobile ? 55 : 120;
+    const ASP = 3, GAP = 2, LENS = 200;
+    let running = false;
     let rafId = null;
     let cameraStream = null;
     let usingCamera = false;
 
-    // --- Camera toggle button ---
-    const camBtn = document.createElement('button');
-    camBtn.className = 'nav-btn pm-cam-btn';
-    camBtn.setAttribute('aria-label', 'Toggle camera');
-    camBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>Try me</span>`;
-    wrap.appendChild(camBtn);
+    // --- Camera toggle button — desktop only ---
+    if (!isMobile) {
+        const camBtn = document.createElement('button');
+        camBtn.className = 'nav-btn pm-cam-btn';
+        camBtn.setAttribute('aria-label', 'Toggle camera');
+        camBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>Try me</span>`;
+        wrap.appendChild(camBtn);
 
-    camBtn.addEventListener('click', async () => {
-        if (!usingCamera) {
-            try {
-                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                vid.srcObject = cameraStream;
-                await vid.play();
-                usingCamera = true;
-                camBtn.classList.add('active');
-            } catch (e) {
-                console.warn('Camera access denied:', e);
+        camBtn.addEventListener('click', async () => {
+            if (!usingCamera) {
+                try {
+                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                    vid.srcObject = cameraStream;
+                    await vid.play();
+                    usingCamera = true;
+                    camBtn.classList.add('active');
+                } catch (e) {
+                    console.warn('Camera access denied:', e);
+                }
+            } else {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(t => t.stop());
+                    cameraStream = null;
+                }
+                vid.srcObject = null;
+                vid.src = 'hero.mp4';
+                vid.play().catch(() => {});
+                usingCamera = false;
+                camBtn.classList.remove('active');
             }
-        } else {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(t => t.stop());
-                cameraStream = null;
-            }
-            vid.srcObject = null;
-            vid.src = 'hero.mp4';
-            vid.play().catch(() => {});
-            usingCamera = false;
-            camBtn.classList.remove('active');
-        }
-    });
+        });
+    }
 
     vid.src = 'hero.mp4';
     vid.play().catch(() => {});
     vid.onloadedmetadata = () => {
-        vid.onloadedmetadata = null; // only run once — camera switch must not re-setup
+        vid.onloadedmetadata = null;
         setup();
         running = true;
         loop();
@@ -89,8 +97,8 @@
         const tileW = Math.max(2, Math.floor(sw / COLS)), tileH = Math.round(tileW * ASP);
         outC.width = Math.floor(sw / tileW) * tileW;
         outC.height = Math.floor(sh / tileH) * tileH;
-        outC.style.width = cw + 'px';
-        outC.style.height = (cw * (sh / sw)) + 'px';
+        outC.style.width = '100%';
+        outC.style.height = 'auto';
     }
 
     // Responsive: reflow on container resize
@@ -129,7 +137,7 @@
 
     function draw() {
         if (!running || vid.readyState < 2) return;
-        const isHovering = mx > -100;
+        const isHovering = !isMobile && mx > -100;
         lensAlpha += ((isHovering ? 1 : 0) - lensAlpha) * 0.07;
         lensAlpha = Math.max(0, Math.min(1, lensAlpha));
 
@@ -194,8 +202,11 @@
         }
     });
 
-    wrap.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-    wrap.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
-    wrap.addEventListener('touchmove', e => { e.preventDefault(); mx = e.touches[0].clientX; my = e.touches[0].clientY; }, { passive: false });
-    wrap.addEventListener('touchend', () => { mx = -9999; my = -9999; });
+    // Mouse/touch interactions — desktop only
+    if (!isMobile) {
+        wrap.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+        wrap.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
+        wrap.addEventListener('touchmove', e => { e.preventDefault(); mx = e.touches[0].clientX; my = e.touches[0].clientY; }, { passive: false });
+        wrap.addEventListener('touchend', () => { mx = -9999; my = -9999; });
+    }
 })();

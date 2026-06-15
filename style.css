@@ -1683,16 +1683,15 @@ body.page-leaving {
 
 .hero-years-tooltip {
     position: absolute;
-    bottom: calc(100% + 10px);
+    bottom: calc(100% + 6px);
     left: 50%;
     transform: translateX(-50%) translateY(4px);
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    padding: 8px;
+    display: flex;
+    gap: 4px;
+    padding: 4px;
     background-color: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 6px;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.15s ease, transform 0.15s ease;
@@ -1701,9 +1700,9 @@ body.page-leaving {
 }
 
 .hero-years-tooltip img {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
     object-fit: cover;
     display: block;
 }
