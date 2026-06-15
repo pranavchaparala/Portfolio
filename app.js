@@ -1,9 +1,9 @@
 /**
  * app.js  –  Projects page logic
- * Renders project cards in a 3-column grid layout:
- *   • layout-3 → full-width 3-image row
- *   • layout-2 → 2-image row, hugs content
- *   • layout-1 → single-image card, placed in a 3-column auto-grid
+ * Renders project cards:
+ *   • layout-3 → full-width row with 3 images
+ *   • layout-2 → full-width row with 2 images
+ *   • layout-1 → placed in a 3-column auto-grid
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,17 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // -------------------------------------------------------
     // RENDER PROJECTS
-    // Layout rules:
-    //   layout-3 → spans a dedicated full-width row
-    //   layout-2 → spans a dedicated row, hugs 2 images
-    //   layout-1 → placed in a 3-column auto-grid row
+    //   layout-3 → dedicated full-width row
+    //   layout-2 → dedicated full-width row
+    //   layout-1 → 3-column grid
     // -------------------------------------------------------
     function renderProjects() {
         if (!projectsSection || typeof projectsData === 'undefined') return;
         projectsSection.innerHTML = '';
 
         let i = 0;
-        // 3-column container for single-image cards
         let singleColumnGrid = null;
 
         function flushSingleGrid() {
@@ -101,9 +99,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         container.appendChild(gallery);
 
+        // Caption below image
+        if (project.caption) {
+            const caption = document.createElement('div');
+            caption.className = 'project-card-caption';
+            caption.textContent = project.caption;
+            container.appendChild(caption);
+        }
+
         // Click handler — opens case study modal, or external URL if no local case study
         container.addEventListener('click', () => {
-            // Projects with external link and Behance URL have no local case study
             if (project.link && project.link.startsWith('http')) {
                 window.open(project.link, '_blank');
             } else {
@@ -164,6 +169,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const actionBtn = document.getElementById('modal-action-btn');
         if (actionBtn) {
             actionBtn.href = project.externalLink || `projects/${project.id}/index.html`;
+            actionBtn.onclick = () => {
+                if (typeof umami !== 'undefined') umami.track('project-live-click', { project: slug, title: project.title });
+            };
         }
 
         const bodyTarget = document.getElementById('modal-dynamic-body-target');
@@ -187,7 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const tempDiv = document.createElement('div');
                 tempDiv.appendChild(csNode.cloneNode(true));
 
-                // Rewrite relative asset paths so they load from the projects subfolder
                 tempDiv.querySelectorAll('img').forEach(img => {
                     const src = img.getAttribute('src');
                     if (src && !src.startsWith('http') && !src.startsWith('/') && !src.startsWith('projects/')) {
@@ -201,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // Replace two-column meta-grid with metadata-showcase-board
                 const metaGrid = tempDiv.querySelector('.meta-grid');
                 if (metaGrid) {
                     const labels = Array.from(metaGrid.querySelectorAll('.meta-label')).map(el => el.textContent.trim());
@@ -232,7 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         return stack;
                     }
 
-                    // Col 1 – About
                     let overviewText = doc.querySelector('meta[name="project-description"]')?.getAttribute('content');
                     if (!overviewText) {
                         overviewText = tempDiv.querySelector('.body-text')?.textContent.trim() || 'No overview available.';
@@ -264,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         board.appendChild(stack);
                     }
 
-                    // Col 3 – Year or remaining key
                     const col3Key = otherKeys.find(k => k !== col2Key && k.toLowerCase() === 'year') ||
                         otherKeys.find(k => k !== col2Key);
                     if (col3Key) {
@@ -294,18 +298,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 bodyTarget.innerHTML = `<div class="case-study-container"><h1>${project.title}</h1><p class="body-text">Content coming soon.</p></div>`;
             });
 
-        // Open modal
         overlayContainer.classList.remove('expanded');
         overlayContainer.classList.add('active');
         if (modalSheet) modalSheet.scrollTop = 0;
         document.body.style.overflow = 'hidden';
 
-        // URL param
+        if (typeof umami !== 'undefined') umami.track('project-view', { project: slug, title: project.title });
+
         const params = new URLSearchParams(window.location.search);
         params.set('p', slug);
         window.history.pushState({ projectSlug: slug }, '', `${window.location.pathname}?${params.toString()}`);
-
-        setTimeout(() => syncRailLayout(), 80);
     };
 
     window.closeCaseStudy = function (event) {
@@ -323,14 +325,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 400);
     };
 
-    // Backdrop click closes modal
     if (overlayContainer) {
         overlayContainer.addEventListener('click', e => {
             if (e.target === overlayContainer) closeCaseStudy(e);
         });
     }
 
-    // Scroll handler — expand to fullscreen mid-scroll, collapse at top/bottom
     if (modalSheet) {
         modalSheet.addEventListener('scroll', () => {
             const pos = modalSheet.scrollTop;
@@ -348,7 +348,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('resize', () => syncRailLayout());
     }
 
-    // Deep-link: open project from URL param on load
     const params = new URLSearchParams(window.location.search);
     const initialSlug = params.get('p');
     if (initialSlug) openCaseStudy(initialSlug);
@@ -358,6 +357,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (p) { openCaseStudy(p); } else { closeCaseStudy(); }
     });
 
-    // --- Kick off ---
     renderProjects();
 });

@@ -4,6 +4,7 @@ const projectsData = [
         "id": "clanx",
         "title": "ClanX",
         "year": "2024",
+        "caption": "AI-powered recruitment platform streamlining talent discovery to hire.",
         "galleryLayout": "3",
         "galleryImages": [
             { "src": "covers/clanx.png", "ratio": "ratio-cube" },
@@ -18,6 +19,7 @@ const projectsData = [
         "id": "permanence-of-decay",
         "title": "Permanence of Decay",
         "year": "2026",
+        "caption": "Digital archive exploring material decay through computational photography.",
         "galleryLayout": "2",
         "galleryImages": [
             { "src": "projects/permanence-of-decay/assets/IMG_0653-edited.jpg", "ratio": "ratio-cube" },
@@ -31,6 +33,7 @@ const projectsData = [
         "id": "lectrix-ev",
         "title": "Lectrix EV",
         "year": "2024",
+        "caption": "EV companion app design for connected mobility and charging experiences.",
         "galleryLayout": "3",
         "galleryImages": [
             { "src": "covers/lectrix1.png", "ratio": "ratio-cube" },
@@ -45,6 +48,7 @@ const projectsData = [
         "id": "lunaring",
         "title": "Luna Ring",
         "year": "2023",
+        "caption": "Smart ring health companion app from scratch, winner of Red Dot Award 2024.",
         "galleryLayout": "2",
         "galleryImages": [
             { "src": "covers/lunaring.png", "ratio": "ratio-cube" },
@@ -58,6 +62,7 @@ const projectsData = [
         "id": "echoes-of-presence",
         "title": "Echoes of Presence",
         "year": "2023",
+        "caption": "Interactive installation exploring presence through sound and light.",
         "galleryLayout": "2",
         "galleryImages": [
             { "src": "covers/echoesofpresence.png", "ratio": "ratio-cube" },
@@ -71,6 +76,7 @@ const projectsData = [
         "id": "unreasonablecube",
         "title": "Unreasonable Cube",
         "year": "2026",
+        "caption": "Generative art cube exploring impossible geometry at hackathon.",
         "galleryLayout": "1",
         "galleryImages": [
             { "src": "projects/unreasonablecube/unreasonablecube_Claude.png", "ratio": "ratio-cube" }
@@ -83,6 +89,7 @@ const projectsData = [
         "id": "oneplus",
         "title": "OnePlus OxygenOS 12",
         "year": "2021",
+        "caption": "Operating system design reaching 16-20 million global users.",
         "galleryLayout": "1",
         "galleryImages": [
             { "src": "covers/oneplus.png", "ratio": "ratio-cube" }
@@ -95,6 +102,7 @@ const projectsData = [
         "id": "viewbuds",
         "title": "Viewbuds",
         "year": "2025",
+        "caption": "True wireless earbuds app with seamless connectivity experience.",
         "galleryLayout": "1",
         "galleryImages": [
             { "src": "covers/viewbuds.png", "ratio": "ratio-cube" }
@@ -107,6 +115,7 @@ const projectsData = [
         "id": "bezapp",
         "title": "Bezapp",
         "year": "",
+        "caption": "Event management app design for seamless social planning.",
         "galleryLayout": "1",
         "galleryImages": [
             { "src": "covers/bezapp.png", "ratio": "ratio-cube" }
@@ -119,6 +128,7 @@ const projectsData = [
         "id": "doodleforest",
         "title": "Doodle Forest",
         "year": "2025",
+        "caption": "Interactive generative forest built with creative coding tools.",
         "galleryLayout": "1",
         "galleryImages": [
             { "src": "covers/doodleforest.png", "ratio": "ratio-cube" }
@@ -131,6 +141,7 @@ const projectsData = [
         "id": "gudz",
         "title": "Gudz",
         "year": "",
+        "caption": "Logistics CMS and delivery platform UX/UI redesign.",
         "galleryLayout": "1",
         "galleryImages": [
             { "src": "covers/gudz.png", "ratio": "ratio-cube" }
@@ -149,8 +160,8 @@ const experimentsData = [
     { id: 5, filename: "playground5.png", videoFilename: "playground5.mp4", title: "METROPOLIS", description: "Generative Cityscape in P5JS" },
     { id: 6, filename: "playground6.png", videoFilename: "playground6.mp4", title: "LOWRES", description: "Audio Reactive Low Resolution in P5JS" },
     { id: 7, filename: "playground7.png", videoFilename: "playground7.png", title: "NOTHING POINT", description: "Fluid Simulation Concept" },
-    { id: 8, filename: "playground8.png", videoFilename: "playground8.mp4", title: "FLUX", description: "Noise Field Visualization" },
-    { id: 9, filename: "playground9.png", videoFilename: "playground9.mp4", title: "ECHO", description: "Recursive Pattern Echo" },
+    { id: 8, filename: "playground8.png", videoFilename: "playground8.png", title: "FLUX", description: "Noise Field Visualization" },
+    { id: 9, filename: "playground9.png", videoFilename: "playground9.png", title: "ECHO", description: "Recursive Pattern Echo" },
     { id: 10, filename: "playground10.png", videoFilename: "playground10.mp4", title: "Mamun Investment Onboarding", description: "Motion Design and Animation" },
     { id: 11, filename: "playground11.png", videoFilename: "playground11.gif", title: "SĀR Rise Collection", description: "Furniture Design - Seating" },
     { id: 12, filename: "playground12.png", videoFilename: "playground12.gif", title: "Inkā Logo", description: "Brand Design for Fitness Diagnosis Platform" },

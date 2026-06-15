@@ -28,16 +28,17 @@
 
     <header>
         <a href="index.html" class="header-block logo-block">pranavchaparala<span>.com</span></a>
-        <div class="header-block tagline-block">Designer and Creative Technologist working across different mediums and
-            scales.</div>
+        <div class="header-block tagline-block"><span class="tagline-text">Designer and Creative Technologist working across different mediums and scales.</span></div>
         <nav id="main-nav">
-            <a href="projects.html" class="nav-btn active">Projects <span class="count" id="projects-count">0</span></a>
+            <a href="projects.html" class="nav-btn active">Projects <span class="count" id="projects-count">11</span></a>
             <a href="experiments.html" class="nav-btn">Experiments <span class="count">19</span></a>
             <a href="about.html" class="nav-btn">About</a>
         </nav>
     </header>
 
-    <h1 class="page-title" id="page-title-text">Projects <span>|</span> <span id="projects-count-title">0</span>
+    <div class="page-content">
+
+    <h1 class="page-title" id="page-title-text">Projects <span>|</span> <span id="projects-count-title">11</span>
         <span>|</span> 2021 – 26
     </h1>
 
@@ -72,27 +73,44 @@
         </div>
     </div>
 
-    <footer class="site-footer">
-        <div class="site-footer-col">
-            <a href="mailto:pranavchaparala@gmail.com" data-haptic>pranavchaparala@gmail.com ↗</a>
+    <footer class="site-footer figma-footer">
+        <div class="footer-left-group">
+            <a href="mailto:pranavchaparala@gmail.com" class="footer-link" data-haptic>pranavchaparala@gmail.com ↗</a>
+            <span class="footer-info">Local Time: <span id="nyc-local-time">05:00:00</span></span>
+            <span class="footer-info">Location: New York City</span>
         </div>
-        <div class="site-footer-col">
-            <span>Last updated</span>
-            <strong>26.05.2026</strong>
-        </div>
-        <div class="site-footer-col theme-toggle-col">
-            <button type="button" class="theme-btn active" data-theme="light" aria-label="Light mode"><span
-                    class="icon">☀</span></button>
-            <button type="button" class="theme-btn" data-theme="dark" aria-label="Dark mode"><span
-                    class="icon">☾</span></button>
-        </div>
-        <div class="site-footer-col scroll-top-col">
-            <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;" data-haptic>Back to top
-                ↗</a>
+        <div class="footer-right-group">
+            <div class="theme-toggle-bar">
+                <button type="button" class="theme-btn theme-btn-sm active" data-theme="light" aria-label="Light mode">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5" />
+                        <line x1="12" y1="1" x2="12" y2="3" />
+                        <line x1="12" y1="21" x2="12" y2="23" />
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                        <line x1="1" y1="12" x2="3" y2="12" />
+                        <line x1="21" y1="12" x2="23" y2="12" />
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                </button>
+                <button type="button" class="theme-btn theme-btn-sm" data-theme="dark" aria-label="Dark mode">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                </button>
+            </div>
+            <a href="#" class="footer-link" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;"
+                data-haptic>Back to top ↗</a>
         </div>
     </footer>
 
+    </div><!-- /.page-content -->
+
     <script src="projects.js"></script>
+    <script src="commentary.js"></script>
     <script src="haptics.js"></script>
     <script src="page-transition.js"></script>
     <script src="app.js"></script>
