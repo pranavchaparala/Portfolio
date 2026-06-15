@@ -41,131 +41,143 @@
 
     <div class="page-content">
 
-    <!-- Hero Section (Figma match) -->
-    <section class="home-hero">
-        <h1 class="home-hero-tagline">
-            Product designer with <span class="hero-years-highlight">4+ years<div class="hero-years-tooltip"><img src="assets/icons/parsons.png" alt="Parsons"><img src="assets/icons/digitalocean.png" alt="Digital Ocean"><img src="assets/icons/noise.png" alt="Noise"><img src="assets/icons/oneplus.png" alt="OnePlus"></div></span> building digital products at scale — from 0→1 launches to features used by 20M+ people. I design and build with code, focused right now on AI-driven products and experiences.
-        </h1>
-        <div class="hero-pills-row">
-            <a href="assets/resume.pdf" class="pill pill-dark" target="_blank" rel="noopener noreferrer">
-                Resume ↗
-            </a>
-            <a href="https://linkedin.com/in/pranavchaparala" class="pill pill-light" target="_blank" rel="noopener noreferrer">
-                LinkedIn ↗
-            </a>
-        </div>
-        <div class="hero-card">
-            <div class="hero-previously-card">
-                <span class="hero-card-text">Previously: Parsons School of Design, Digital Ocean, Noise and OnePlus.</span>
-                <span class="hero-card-year">2021 – 2026</span>
+        <!-- Hero Section (Figma match) -->
+        <section class="home-hero">
+            <h1 class="home-hero-tagline">
+                Product designer with <span class="hero-years-highlight">4+ years<div class="hero-years-tooltip"><img
+                            src="assets/icons/parsons.png" alt="Parsons"><img src="assets/icons/digitalocean.png"
+                            alt="Digital Ocean"><img src="assets/icons/noise.png" alt="Noise"><img
+                            src="assets/icons/oneplus.png" alt="OnePlus"></div></span> building digital products at
+                scale — from 0→1 launches to features used by 20M+ people. I design and build with code, focused right
+                now on AI-driven products and experiences.
+            </h1>
+            <div class="hero-pills-row">
+                <a href="https://drive.google.com/uc?export=download&id=1cpND1GMJiNTteY0yfT2CI8pOVJn2AvJp"
+                    class="pill pill-dark" target="_blank" rel="noopener noreferrer">
+                    Resume ↗
+                </a>
+                <a href="https://linkedin.com/in/pranavchaparala" class="pill pill-light" target="_blank"
+                    rel="noopener noreferrer">
+                    LinkedIn ↗
+                </a>
             </div>
-            <div class="hero-card-image" id="hero-mosaic-container">
-                <div id="pm-container" style="width:100%;height:60%;position:relative;"></div>
+            <div class="hero-card">
+                <div class="hero-previously-card">
+                    <span class="hero-card-text">Previously: Parsons School of Design, Digital Ocean, Noise and
+                        OnePlus.</span>
+                    <span class="hero-card-year">2021 – 2026</span>
+                </div>
+                <div class="hero-card-image" id="hero-mosaic-container">
+                    <div id="pm-container" style="width:100%;height:60%;position:relative;"></div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Selected Projects Section -->
-    <section class="home-section">
-        <div class="section-label-row">
-            <h2 class="section-label">Selected Projects</h2>
-            <div class="section-line"></div>
-        </div>
-        <div class="home-projects-grid" id="home-projects-carousel">
-            <!-- Populated by home.js -->
-        </div>
-    </section>
-
-    <!-- Experiments Section (auto-play carousel) -->
-    <section class="home-section home-section--experiments">
-        <div class="section-label-row">
-            <h2 class="section-label">Selected Experiments</h2>
-            <div class="section-line"></div>
-        </div>
-        <div class="home-experiments-thumbs" id="home-experiments-thumbs">
-            <!-- Populated by home.js -->
-        </div>
-    </section>
-
-    <!-- Case Study Modal -->
-    <div class="modal-overlay" id="case-study-modal">
-        <div class="modal-sheet" id="modal-sheet-node">
-            <div class="modal-right-progress-rail" id="modal-rail">
-                <div class="modal-right-viewport-window" id="modal-viewport-indicator"></div>
-                <div class="modal-mini-map-blueprint" id="modal-mini-map-content"></div>
+        <!-- Selected Projects Section -->
+        <section class="home-section">
+            <div class="section-label-row">
+                <h2 class="section-label">Selected Projects</h2>
+                <div class="section-line"></div>
             </div>
-            <div class="modal-inner-content-frame">
-                <div class="modal-sticky-header">
-                    <div class="modal-nav-header-container">
-                        <div class="header-block modal-project-title" id="modal-title-target">Project Overview</div>
-                        <a class="nav-btn active" id="modal-action-btn" target="_blank">Live Website ↗</a>
-                        <button class="nav-btn" id="modal-close-btn-desktop" onclick="closeCaseStudy(event)">Close View</button>
+            <div class="home-projects-grid" id="home-projects-carousel">
+                <!-- Populated by home.js -->
+            </div>
+        </section>
+
+        <!-- Experiments Section (auto-play carousel) -->
+        <section class="home-section home-section--experiments">
+            <div class="section-label-row">
+                <h2 class="section-label">Selected Experiments</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="home-experiments-thumbs" id="home-experiments-thumbs">
+                <!-- Populated by home.js -->
+            </div>
+        </section>
+
+        <!-- Case Study Modal -->
+        <div class="modal-overlay" id="case-study-modal">
+            <div class="modal-sheet" id="modal-sheet-node">
+                <div class="modal-right-progress-rail" id="modal-rail">
+                    <div class="modal-right-viewport-window" id="modal-viewport-indicator"></div>
+                    <div class="modal-mini-map-blueprint" id="modal-mini-map-content"></div>
+                </div>
+                <div class="modal-inner-content-frame">
+                    <div class="modal-sticky-header">
+                        <div class="modal-nav-header-container">
+                            <div class="header-block modal-project-title" id="modal-title-target">Project Overview</div>
+                            <a class="nav-btn active" id="modal-action-btn" target="_blank">Live Website ↗</a>
+                            <button class="nav-btn" id="modal-close-btn-desktop" onclick="closeCaseStudy(event)">Close
+                                View</button>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-body-scroller-content">
-                    <div class="modal-content-container" id="modal-dynamic-body-target"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Experiment Modal -->
-    <div class="modal-overlay" id="experiment-modal">
-        <div class="modal-sheet exp-modal-sheet" id="experiment-modal-sheet">
-            <div class="modal-right-progress-rail" id="exp-modal-rail">
-                <div class="modal-right-viewport-window" id="exp-modal-viewport-indicator"></div>
-                <div class="modal-mini-map-blueprint" id="exp-modal-mini-map"></div>
-            </div>
-            <div class="modal-inner-content-frame">
-                <div class="modal-sticky-header">
-                    <div class="modal-nav-header-container">
-                        <div class="header-block modal-project-title" id="experiment-modal-title">Experiment Title</div>
-                        <button class="nav-btn" onclick="closeExperimentModal(event)">Close View</button>
-                    </div>
-                </div>
-                <div class="modal-body-scroller-content exp-modal-body" id="exp-modal-body">
-                    <div class="modal-content-container exp-modal-content" id="exp-modal-dynamic-body">
-                        <div class="exp-modal-media-wrap" id="experiment-media-container"></div>
-                        <div class="exp-modal-meta-row" id="exp-modal-meta"></div>
+                    <div class="modal-body-scroller-content">
+                        <div class="modal-content-container" id="modal-dynamic-body-target"></div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <footer class="site-footer figma-footer">
-        <div class="footer-left-group">
-            <a href="mailto:pranavchaparala@gmail.com" class="footer-link" data-haptic>pranavchaparala@gmail.com ↗</a>
-            <span class="footer-info">Local Time: <span id="nyc-local-time">05:00:00</span></span>
-            <span class="footer-info">Location: New York City</span>
-        </div>
-        <div class="footer-right-group">
-            <div class="theme-toggle-bar">
-                <button type="button" class="theme-btn theme-btn-sm active" data-theme="light" aria-label="Light mode">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5" />
-                        <line x1="12" y1="1" x2="12" y2="3" />
-                        <line x1="12" y1="21" x2="12" y2="23" />
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                        <line x1="1" y1="12" x2="3" y2="12" />
-                        <line x1="21" y1="12" x2="23" y2="12" />
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                    </svg>
-                </button>
-                <button type="button" class="theme-btn theme-btn-sm" data-theme="dark" aria-label="Dark mode">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                    </svg>
-                </button>
+        <!-- Experiment Modal -->
+        <div class="modal-overlay" id="experiment-modal">
+            <div class="modal-sheet exp-modal-sheet" id="experiment-modal-sheet">
+                <div class="modal-right-progress-rail" id="exp-modal-rail">
+                    <div class="modal-right-viewport-window" id="exp-modal-viewport-indicator"></div>
+                    <div class="modal-mini-map-blueprint" id="exp-modal-mini-map"></div>
+                </div>
+                <div class="modal-inner-content-frame">
+                    <div class="modal-sticky-header">
+                        <div class="modal-nav-header-container">
+                            <div class="header-block modal-project-title" id="experiment-modal-title">Experiment Title
+                            </div>
+                            <button class="nav-btn" onclick="closeExperimentModal(event)">Close View</button>
+                        </div>
+                    </div>
+                    <div class="modal-body-scroller-content exp-modal-body" id="exp-modal-body">
+                        <div class="modal-content-container exp-modal-content" id="exp-modal-dynamic-body">
+                            <div class="exp-modal-media-wrap" id="experiment-media-container"></div>
+                            <div class="exp-modal-meta-row" id="exp-modal-meta"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <a href="#" class="footer-link" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;"
-                data-haptic>Back to top ↗</a>
         </div>
-    </footer>
+
+        <footer class="site-footer figma-footer">
+            <div class="footer-left-group">
+                <a href="mailto:pranavchaparala@gmail.com" class="footer-link" data-haptic>pranavchaparala@gmail.com
+                    ↗</a>
+                <span class="footer-info">Local Time: <span id="nyc-local-time">05:00:00</span></span>
+                <span class="footer-info">Location: New York City</span>
+            </div>
+            <div class="footer-right-group">
+                <div class="theme-toggle-bar">
+                    <button type="button" class="theme-btn theme-btn-sm active" data-theme="light"
+                        aria-label="Light mode">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                    </button>
+                    <button type="button" class="theme-btn theme-btn-sm" data-theme="dark" aria-label="Dark mode">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                        </svg>
+                    </button>
+                </div>
+                <a href="#" class="footer-link" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;"
+                    data-haptic>Back to top ↗</a>
+            </div>
+        </footer>
 
     </div><!-- /.page-content -->
 
