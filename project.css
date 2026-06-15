@@ -523,3 +523,9 @@
                 transition: none !important;
             }
         }
+
+        @media (max-width: 768px) {
+            .case-study-container {
+                padding-top: 120px !important;
+            }
+        }

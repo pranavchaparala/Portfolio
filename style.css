@@ -2154,11 +2154,11 @@ body.page-leaving {
     }
 
     .modal-body-scroller-content {
-        padding: 8px 0 24px 0;
+        padding: 88px 0 24px 0;
     }
 
     .modal-content-container {
-        max-width: 100%;
+        max-width: 100% !important;
         padding: 0 16px;
         gap: 20px;
     }
