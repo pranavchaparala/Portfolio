@@ -228,10 +228,9 @@ header {
 .logo-block span {
     display: inline-block;
     opacity: 0;
-    transition: opacity 0.2s ease;
     color: var(--text-secondary);
     margin-left: 8px;
-    transition: margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
+    transition: opacity 0.2s ease, margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
 }
 
 .logo-block:hover span {

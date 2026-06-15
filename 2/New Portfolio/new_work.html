@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Projects Index</title>
+    <style>
+        /* --- Core Reset & Minimalist UI Foundations --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F5F5F5;
+            color: #000000;
+            padding: 90px 40px 24px 40px;
+            letter-spacing: -0.01em;
+            overflow-x: hidden;
+            font-size: 14px;
+        }
+
+        /* --- STABLE FIXED NAVIGATION BAR --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: stretch;
+            gap: 8px;
+            padding: 24px 40px;
+            background-color: transparent;
+            z-index: 1000;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .header-block {
+            position: relative;
+            background-color: #EEEEEE;
+            border: 1px solid #DDDDDD;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            color: #111111;
+            border-radius: 6px;
+            pointer-events: auto;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+        }
+
+        .logo-block {
+            font-weight: 500;
+        }
+
+        .logo-block span {
+            color: #666666;
+            margin-left: 2px;
+        }
+
+        .tagline-block {
+            flex-grow: 1;
+            color: #1a1a1a;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+            pointer-events: auto;
+        }
+
+        .nav-btn {
+            position: relative;
+            background-color: #EEEEEE;
+            border: 1px solid #DDDDDD;
+            padding: 6px 14px;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #000000;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            transition: background-color 0.15s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: #E2E2E2;
+        }
+
+        .nav-btn .count {
+            background-color: #111111;
+            color: #FFFFFF;
+            padding: 2px 6px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 4px;
+        }
+
+        .nav-btn.active {
+            background-color: #111111;
+            color: #FFFFFF;
+            border-color: #111111;
+        }
+
+        .nav-btn.active .count {
+            background-color: #FFFFFF;
+            color: #111111;
+        }
+
+        /* --- Grid & Cards Architecture --- */
+        .page-title {
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            margin-bottom: 1rem;
+            color: #111111;
+            text-transform: uppercase;
+        }
+
+        .page-title span {
+            color: #999999;
+            margin: 0 6px;
+            font-weight: 300;
+        }
+
+        .projects-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .project-row-split {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            width: 100%;
+        }
+
+        .project-card-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background-color: #EAEAEA;
+            border-radius: 4px;
+            padding: 8px;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px;
+            font-size: 14px;
+            color: #111111;
+        }
+
+        .project-gallery {
+            display: grid;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .gallery-grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .gallery-grid-2 {
+            grid-template-columns: 4fr 7fr;
+        }
+
+        .gallery-grid-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .gallery-grid-panoramic-single {
+            grid-template-columns: 1fr;
+            max-width: 66.666%;
+        }
+
+        .media-frame {
+            position: relative;
+            background-color: #DCDCDC;
+            overflow: hidden;
+            border-radius: 3px;
+            width: 100%;
+        }
+
+        .ratio-cube {
+            aspect-ratio: 1.5 / 1;
+        }
+
+        .ratio-panoramic-split {
+            aspect-ratio: 2.3 / 1;
+        }
+
+        .ratio-echoes-left {
+            aspect-ratio: 1 / 1.05;
+        }
+
+        .ratio-echoes-right {
+            aspect-ratio: 1.75 / 1;
+        }
+
+        .ratio-landscape {
+            aspect-ratio: 16 / 9.5;
+        }
+
+        .media-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .project-card-container:hover {
+            background-color: #E1E1E1;
+            transform: translateY(-1px);
+        }
+
+        /* --- Backdrop View Overlay --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            z-index: -1;
+            transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-overlay.active::before {
+            background-color: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* --- STUCK RIGHT-CENTER HIGH FIDELITY PROPORTIONAL MINIMAP RAIL --- */
+        .modal-right-progress-rail {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            width: 52px;
+            /* Perfect visual width matching screenshot track bounds */
+            height: auto;
+            /* Dynamic sizing calculated via javascript */
+            max-height: calc(100vh - 120px);
+            background-color: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 4px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.expanded .modal-right-progress-rail {
+            opacity: 1;
+        }
+
+        /* Visual viewport indicator tracking outline box layer */
+        .modal-right-viewport-window {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            border: 1.5px solid #000000;
+            /* Clean structural frame tracking outline */
+            background-color: rgba(0, 0, 0, 0.03);
+            z-index: 2;
+            will-change: transform, height;
+        }
+
+        .modal-mini-map-blueprint {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100vw;
+            pointer-events: none;
+            opacity: 0.12;
+            transform-origin: top right;
+            z-index: 1;
+        }
+
+        /* --- Modal Sheet Container --- */
+        .modal-sheet {
+            position: relative;
+            background-color: #FFFFFF;
+            width: 70%;
+            max-width: 1100px;
+            height: calc(100vh - 80px);
+            margin-top: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+            overflow-y: scroll;
+            overflow-x: hidden;
+            transform: translateY(60px) translateZ(0);
+            will-change: transform, width, max-width, height, margin-top, border-radius;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.5s cubic-bezier(0.16, 1, 0.3, 1), height 0.5s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-sheet::-webkit-scrollbar {
+            display: none;
+        }
+
+        .modal-sheet {
+            scrollbar-width: none;
+        }
+
+        .modal-overlay.active .modal-sheet {
+            transform: translateY(0) translateZ(0);
+        }
+
+        .modal-overlay.expanded .modal-sheet {
+            width: 100%;
+            max-width: 100%;
+            height: 100vh;
+            margin-top: 0;
+            border-radius: 0;
+        }
+
+        /* --- STICKY CONTROL SUB-NAV BAR --- */
+        .modal-sticky-header {
+            position: sticky;
+            top: 0;
+            background-color: transparent;
+            z-index: 99;
+            padding: 24px 32px;
+            transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .modal-overlay.expanded .modal-sticky-header {
+            padding: 32px 64px;
+        }
+
+        .modal-nav-header-container {
+            width: 100%;
+            max-width: 1036px;
+            margin: 0 auto;
+        }
+
+        .modal-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 16px;
+            background-color: #FFFFFF;
+            border: 1px solid #EEEEEE;
+            border-radius: 8px;
+            pointer-events: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .modal-project-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111111;
+        }
+
+        .modal-action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-pill-left {
+            background-color: rgba(0, 0, 0, 0.04);
+            padding: 5px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            color: #444444;
+            font-weight: 500;
+        }
+
+        .action-pill-right {
+            background-color: #111111;
+            color: #FFFFFF;
+            padding: 5px 14px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.15s ease;
+        }
+
+        .action-pill-right:hover {
+            background-color: #333333;
+        }
+
+        /* --- Content Layout Scroller Frame --- */
+        .modal-inner-content-frame {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-body-scroller-content {
+            width: 100%;
+            padding: 8px 32px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-content-container {
+            width: 100%;
+            max-width: 1036px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Clear workspace gutter clearance metrics configuration */
+        .modal-overlay.expanded .modal-body-scroller-content {
+            padding: 12px 110px 120px 64px;
+        }
+
+        .modal-hero-showcase {
+            background: linear-gradient(to bottom, #EAEAEA, #FFFFFF);
+            border-radius: 6px;
+            padding: 64px 24px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+            width: 100%;
+        }
+
+        .modal-hero-title {
+            font-size: 46px;
+            font-weight: 700;
+            color: #111111;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            max-width: 600px;
+        }
+
+        .modal-hero-display-frame {
+            width: 85%;
+            aspect-ratio: 1.618 / 1;
+            background-color: #FFFFFF;
+            border-radius: 4px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06);
+            border: 1px solid #EAEAEA;
+            overflow: hidden;
+        }
+
+        .modal-hero-display-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-body-intro-text {
+            font-size: 15px;
+            color: #444444;
+            line-height: 1.6;
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* --- UNIFIED CSS GRID FOR METADATA PANELS --- */
+        .metadata-showcase-board {
+            display: grid;
+            grid-template-columns: 2.1fr 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .meta-panel-tag {
+            background-color: #EFEFEF;
+            border-radius: 6px;
+            padding: 14px 18px;
+            font-size: 15px;
+            color: #8C939D;
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .meta-panel-tag.actionable-variant {
+            background-color: #323338;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.15s ease;
+        }
+
+        .meta-panel-tag.actionable-variant:hover {
+            background-color: #1E1F22;
+        }
+
+        .meta-panel-body-card {
+            background-color: #EFEFEF;
+            border-radius: 6px;
+            padding: 24px;
+            font-size: 15px;
+            color: #1A1D20;
+            line-height: 1.6;
+            height: calc(100% - 53px);
+        }
+
+        .meta-panel-body-card.list-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .meta-list-row {
+            color: #1A1D20;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        /* --- EXTRA LONG CASE STUDY NARRATIVE CONTENT MODULES --- */
+        .narrative-editorial-block {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 720px;
+            margin: 20px 0;
+        }
+
+        .narrative-editorial-block h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111111;
+            letter-spacing: -0.01em;
+        }
+
+        .narrative-editorial-block p {
+            font-size: 15px;
+            color: #444444;
+            line-height: 1.65;
+        }
+
+        .split-imagery-showcase {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            width: 100%;
+            margin: 12px 0;
+        }
+
+        .split-img-box {
+            background-color: #F9F9F9;
+            border: 1px solid #EEEEEE;
+            border-radius: 6px;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+        }
+
+        .split-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Responsive Breakpoints Handling Grid Systems */
+        @media (max-width: 992px) {
+            .modal-right-progress-rail {
+                display: none !important;
+            }
+
+            .modal-overlay.expanded .modal-body-scroller-content {
+                padding: 12px 32px 48px 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 110px 16px 16px 16px;
+            }
+
+            header {
+                padding: 16px;
+                flex-wrap: wrap;
+            }
+
+            .tagline-block {
+                display: none;
+            }
+
+            .project-row-split {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .gallery-grid-3,
+            .gallery-grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid-panoramic-single {
+                max-width: 100%;
+            }
+
+            .modal-sheet {
+                width: 100%;
+                height: 100vh;
+                margin-top: 0;
+                border-radius: 0;
+            }
+
+            .modal-sticky-header {
+                padding: 12px;
+                top: 0;
+            }
+
+            .modal-body-scroller-content {
+                padding: 16px 12px;
+            }
+
+            .metadata-showcase-board {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .split-imagery-showcase {
+                grid-template-columns: 1fr;
+            }
+
+            .meta-panel-body-card {
+                height: auto;
+            }
+
+            .modal-hero-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-block logo-block">pranavchaparala<span>.com</span></div>
+        <div class="header-block tagline-block">Designer and Creative Technologist working across different mediums and
+            scales.</div>
+        <nav>
+            <button class="nav-btn active">Projects <span class="count">14</span></button>
+            <button class="nav-btn">Experiments <span class="count">8</span></button>
+            <button class="nav-btn">About</button>
+        </nav>
+    </header>
+
+    <h1 class="page-title">Projects <span>|</span> 6 <span>|</span> 2021 - 26</h1>
+
+    <main class="projects-wrapper">
+
+        <div class="project-card-container" data-slug="lectrix-ev"
+            onclick="openCaseStudy('LectrixEV', 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=800&q=80', 'scale hiring.<br>not workload', 'lectrix-ev')">
+            <div class="project-header">
+                <span class="project-name">LectrixEV</span>
+                <span class="project-year">2025</span>
+            </div>
+            <div class="project-gallery gallery-grid-3">
+                <div class="media-frame ratio-cube"><img
+                        src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=800&q=80"
+                        alt=""></div>
+                <div class="media-frame ratio-cube"><img
+                        src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
+                        alt=""></div>
+                <div class="media-frame ratio-cube"><img
+                        src="https://images.unsplash.com/photo-1581291518655-9523c932dedf?auto=format&fit=crop&w=800&q=80"
+                        alt=""></div>
+            </div>
+        </div>
+
+        <div class="project-card-container" data-slug="lectrix-panoramic"
+            onclick="openCaseStudy('LectrixEV Wide', 'https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?auto=format&fit=crop&w=1600&q=80', 'widescreen vision.<br>ambient power', 'lectrix-panoramic')">
+            <div class="project-header">
+                <span class="project-name">LectrixEV Wide</span>
+                <span class="project-year">2025</span>
+            </div>
+            <div class="project-gallery gallery-grid-panoramic-single">
+                <div class="media-frame ratio-panoramic-split"><img
+                        src="https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?auto=format&fit=crop&w=1600&q=80"
+                        alt=""></div>
+            </div>
+        </div>
+
+        <div class="project-row-split">
+            <div class="project-card-container" data-slug="unreasonable-cube"
+                onclick="openCaseStudy('Unreasonable Cube', 'https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=900&q=80', 'tangible code.<br>physical logic', 'unreasonable-cube')">
+                <div class="project-header">
+                    <span class="project-name">Unreasonable Cube</span>
+                    <span class="project-year">2025</span>
+                </div>
+                <div class="project-gallery gallery-grid-1">
+                    <div class="media-frame ratio-landscape"><img
+                            src="https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=900&q=80"
+                            alt=""></div>
+                </div>
+            </div>
+
+            <div class="project-card-container" data-slug="noise-view-buds"
+                onclick="openCaseStudy('Noise View Buds', 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=900&q=80', 'acoustic space.<br>pure hardware', 'noise-view-buds')">
+                <div class="project-header">
+                    <span class="project-name">Noise View Buds</span>
+                    <span class="project-year">2025</span>
+                </div>
+                <div class="project-gallery gallery-grid-1">
+                    <div class="media-frame ratio-landscape"><img
+                            src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=900&q=80"
+                            alt=""></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="modal-overlay" id="case-study-modal" onclick="closeCaseStudy(event)">
+
+        <div class="modal-sheet" id="modal-sheet-node" onclick="event.stopPropagation()">
+
+            <div class="modal-right-progress-rail" id="modal-rail">
+                <div class="modal-right-viewport-window" id="modal-viewport-indicator"></div>
+                <div class="modal-mini-map-blueprint" id="modal-mini-map-content"></div>
+            </div>
+
+            <div class="modal-inner-content-frame">
+                <div class="modal-sticky-header">
+                    <div class="modal-nav-header-container">
+                        <div class="modal-nav-header">
+                            <div class="modal-project-title" id="modal-title-target">Project Architectural Overview
+                            </div>
+                            <div class="modal-action-bar">
+                                <div class="action-pill-left">Case Study</div>
+                                <button class="action-pill-right" onclick="closeCaseStudy(event)">Close View</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body-scroller-content">
+                    <div class="modal-content-container" id="modal-dynamic-body-target">
+
+                        <div class="modal-hero-showcase">
+                            <h2 class="modal-hero-title" id="modal-hero-text-target">Design Showcase</h2>
+                            <div class="modal-hero-display-frame">
+                                <img id="modal-img-target" src="" alt="Project Display Grid">
+                            </div>
+                        </div>
+
+                        <p class="modal-body-intro-text">
+                            A structural analysis exploring systemic interface processes designed to smoothly adapt
+                            content layouts across modular canvas scaling conditions.
+                        </p>
+
+                        <div class="metadata-showcase-board">
+                            <div class="meta-stack-block">
+                                <span class="meta-panel-tag">About</span>
+                                <div class="meta-panel-body-card">
+                                    This case study explores the key features, design philosophy, and potential impact
+                                    of Deep Profiles on ClanX, an AI-powered recruitment platform. It highlights the
+                                    importance of understanding recruiter needs, analyzing essential candidate data
+                                    points, and designing efficient, user-centered workflows.
+                                </div>
+                            </div>
+
+                            <div class="meta-stack-block">
+                                <span class="meta-panel-tag">Tech</span>
+                                <div class="meta-panel-body-card list-layout">
+                                    <div class="meta-list-row">Branding</div>
+                                    <div class="meta-list-row">Product Design</div>
+                                    <div class="meta-list-row">UI / UX Design</div>
+                                    <div class="meta-list-row">Interaction Design</div>
+                                    <div class="meta-list-row">Design System</div>
+                                </div>
+                            </div>
+
+                            <div class="meta-stack-block">
+                                <a href="#" target="_blank" class="meta-panel-tag actionable-variant">
+                                    <span>Live Site</span>
+                                    <span>↗</span>
+                                </a>
+                                <div class="meta-panel-body-card list-layout">
+                                    <div class="meta-list-row" style="color:#8C939D;">Tech Stack</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="narrative-editorial-block">
+                            <h3>01 / Core Structural Ideation</h3>
+                            <p>To establish a coherent visual workflow ecosystem, the interface engine evaluates the
+                                depth of candidate data logs in real-time. By transforming unstructured talent profiles
+                                into structured semantic blueprints, recruiters can dynamically map candidates across
+                                complex operational requirements without losing context.</p>
+                        </div>
+
+                        <div class="split-imagery-showcase">
+                            <div class="split-img-box"><img
+                                    src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=600&q=80"
+                                    alt=""></div>
+                            <div class="split-img-box"><img
+                                    src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80"
+                                    alt=""></div>
+                        </div>
+
+                        <div class="narrative-editorial-block">
+                            <h3>02 / Iterative Design Sprints & Mapping</h3>
+                            <p>Our approach centered around flattening structural deep hierarchical trees into simple
+                                micro-gestural task panels. This reduction eliminates multi-tab fatigue, maximizing
+                                scanning efficacy across high-density tracking tables. Over 40 distinct states were
+                                audited to construct a resilient UI layout structure.</p>
+                        </div>
+
+                        <div class="split-imagery-showcase">
+                            <div class="split-img-box"><img
+                                    src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?auto=format&fit=crop&w=600&q=80"
+                                    alt=""></div>
+                            <div class="split-img-box"><img
+                                    src="https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=600&q=80"
+                                    alt=""></div>
+                        </div>
+
+                        <div class="narrative-editorial-block">
+                            <h3>03 / Final Verification Metrics</h3>
+                            <p>Deploying this flexible UI matrix across alpha client systems yielded a measurable
+                                decrease in interaction loop times. Users achieved faster screening phases while
+                                reporting lower visual fatigue levels during extended platform operations.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const INDEX_PATH = window.location.pathname.endsWith('index.html') ? window.location.pathname : window.location.pathname + 'index.html';
+
+        const overlayContainer = document.getElementById('case-study-modal');
+        const modalSheet = document.getElementById('modal-sheet-node');
+        const viewportIndicator = document.getElementById('modal-viewport-indicator');
+        const miniMapBlueprint = document.getElementById('modal-mini-map-content');
+        const layoutRail = document.getElementById('modal-rail');
+        const structuralTarget = document.getElementById('modal-dynamic-body-target');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const resizeObserver = new ResizeObserver(() => syncRailLayout());
+            resizeObserver.observe(structuralTarget);
+            window.addEventListener('resize', () => syncRailLayout());
+
+            modalSheet.addEventListener('scroll', () => {
+                const scrollPos = modalSheet.scrollTop;
+
+                if (scrollPos > 40) {
+                    overlayContainer.classList.add('expanded');
+                } else {
+                    overlayContainer.classList.remove('expanded');
+                }
+
+                executeRailTracking(scrollPos);
+            });
+        });
+
+        function syncRailLayout() {
+            if (!overlayContainer.classList.contains('active')) return;
+
+            const contentTotalHeight = modalSheet.scrollHeight;
+            const screenViewHeight = modalSheet.clientHeight;
+
+            // Generate visual miniature layer blueprint architecture
+            miniMapBlueprint.innerHTML = '';
+            miniMapBlueprint.appendChild(structuralTarget.cloneNode(true));
+
+            // Map aspect scale factor ratio limits directly matching viewport design parameters
+            const scaleFactor = layoutRail.clientWidth / window.innerWidth;
+            miniMapBlueprint.style.transform = `scale(${scaleFactor})`;
+
+            // Set dynamic height of track rail to match webpage scroll aspect ratio
+            const calculatedRailHeight = (screenViewHeight / contentTotalHeight) * (screenViewHeight * 0.7);
+            layoutRail.style.height = `${Math.min(calculatedRailHeight, screenViewHeight - 120)}px`;
+
+            // Outline box shows proportional slice matching viewport scale factors exactly
+            const indicatorHeight = (screenViewHeight / contentTotalHeight) * layoutRail.clientHeight;
+            viewportIndicator.style.height = `${Math.max(indicatorHeight, 20)}px`;
+
+            executeRailTracking(modalSheet.scrollTop);
+        }
+
+        function executeRailTracking(scrollTopPosition) {
+            const totalScrollableBounds = modalSheet.scrollHeight - modalSheet.clientHeight;
+
+            if (totalScrollableBounds > 0) {
+                const scrollPercent = scrollTopPosition / totalScrollableBounds;
+                const availableRailTrack = layoutRail.clientHeight - viewportIndicator.clientHeight;
+
+                // Track visual black outline position timeline variables
+                viewportIndicator.style.transform = `translateY(${scrollPercent * availableRailTrack}px)`;
+
+                // Scale blueprint content inside background layer track metrics safely
+                const scaleFactor = layoutRail.clientWidth / window.innerWidth;
+                const scaledBlueprintHeight = structuralTarget.scrollHeight * scaleFactor;
+                if (scaledBlueprintHeight > layoutRail.clientHeight) {
+                    miniMapBlueprint.style.top = `-${(scaledBlueprintHeight - layoutRail.clientHeight) * scrollPercent}px`;
+                }
+            } else {
+                viewportIndicator.style.transform = 'translateY(0)';
+            }
+        }
+
+        function openCaseStudy(name, imgSrc, heroMarkup, slug) {
+            document.getElementById('modal-title-target').innerText = name + ' — Case Archive';
+            document.getElementById('modal-hero-text-target').innerHTML = heroMarkup;
+            document.getElementById('modal-img-target').src = imgSrc;
+
+            overlayContainer.classList.remove('expanded');
+            overlayContainer.classList.add('active');
+
+            modalSheet.scrollTop = 0;
+            document.body.style.overflow = 'hidden';
+
+            setTimeout(() => {
+                syncRailLayout();
+            }, 60);
+
+            const targetURL = `${INDEX_PATH}?p=${slug}`;
+            window.history.pushState({ projectSlug: slug }, "", targetURL);
+        }
+
+        function closeCaseStudy(event) {
+            if (event) event.stopPropagation();
+
+            overlayContainer.classList.remove('active');
+            overlayContainer.classList.remove('expanded');
+
+            window.history.pushState(null, "", INDEX_PATH);
+
+            setTimeout(() => {
+                document.body.style.overflow = 'auto';
+                miniMapBlueprint.innerHTML = '';
+            }, 400);
+        }
+    </script>
+</body>
+
+</html>

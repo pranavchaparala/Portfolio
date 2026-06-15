@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQ1FRLB07W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-ZQ1FRLB07W');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doodle Forest | Pranav Chaparala</title>
+    <meta name="description" content="Plant flora and spawn fauna in a generative 10x10 grid using the Google Quick Draw dataset.">
+    <meta property="og:title" content="Doodle Forest | Pranav Chaparala">
+    <meta property="og:description" content="Plant flora and spawn fauna in a generative 10x10 grid using the Google Quick Draw dataset....">
+    <meta property="og:image" content="https://pranavchaparala.com/covers/doodleforest.png">
+    <meta property="og:url" content="https://pranavchaparala.com/doodleforest/">
+    <meta name="twitter:card" content="summary_large_image">
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../project.css">
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <meta name="project-img" content="doodleforest.png">
+    <meta name="project-tags" content="Creative Tech">
+    <meta name="project-description" content="Plant flora and spawn fauna in a generative 10x10 grid using the Google Quick Draw dataset.">
+    <meta name="project-year" content="2025">
+</head>
+
+<body>
+
+    <a href="../" class="back-btn-center"><span>←</span> Go Back</a>
+
+    <nav id="work-list">
+        <span class="section-label">Work</span>
+        <ul></ul>
+    </nav>
+    <div class="page-content">
+        <main id="main-content">
+            <div class="case-study-container" id="project-container">
+                <h1>Doodle Forest</h1>
+                <p class="tagline">Plant flora and spawn fauna in a generative 10x10 grid.</p>
+                <p class="body-text">Doodle Forest is a zen experiment that transforms one of the world’s largest collections of hand-drawn sketches into a playful, interactive ecosystem. By leveraging the Google Quick, Draw! dataset, the project allows users to "reforest" a digital grid with simplified representations of nature, exploring the boundary between human intent and machine-categorized data.</p>
+
+                <div class="meta-grid">
+                    <span class="meta-label">Year</span><span class="meta-value">2025</span>
+                    <span class="meta-label">Media</span><span class="meta-value">Data Scraping, Data Visualization & Web Design</span>
+                </div>
+                
+                <video autoplay loop muted playsinline class="full-img">
+                    <source src="assets/1.mp4" type="video/mp4">
+                </video>
+                
+                <hr>    
+                
+                <h2>THE DATASET: GAMIFIED LABOUR</h2>
+                <p class="body-text">The project is built upon the Google Quick, Draw! dataset, a massive open-source library of over 50 million drawings across 345 categories. Originally collected through a global online game, the dataset is a byproduct of a "gamified" labor process: as players raced against a 20-second clock to draw a specific object, Google’s neural networks learned to recognize the essential strokes that define a "flower," a "tree," or a "lion."</p>
+
+                <div class="media-row">                    
+                    <img src="assets/2.png" alt="Quick Draw Sample 1">
+                    <img src="assets/3.png" alt="Quick Draw Sample 2">
+                </div>
+
+                <hr>
+                <h2>A ZEN SCRAPER EXPERIMENT</h2>
+                <p class="body-text">For <i>Doodle Forest</i>, I scraped Google’s Quick Draw repository to extract specific subsets of flora and fauna sketches. While the original data was intended for training classification models, this experiment re-contextualizes the sketches as modular building blocks for a collaborative environment.</p>
+
+                <p class="body-text">By placing these doodles onto a constrained 10x10 grid, the project moves away from the high-speed pressure of the original game toward a meditative experience. It highlights the charm and variability of human drawings by showing how thousands of people across the globe uniquely interpret the same simple organic forms—resulting in a forest that is at once digital, collective, and deeply human.</p>
+            </div>
+        </main>
+    </div>
+
+    <div class="nav-rail" id="rail">
+        <div id="scroll-indicator"></div>
+        <div id="mini-map-content"></div>
+    </div>
+
+    <script src="../projects.js"></script>
+    <script src="../cursor.js"></script>
+    <script src="../components.js?v=2"></script>
+
+    <script>
+        const lenis = new Lenis({ duration: 1.2, lerp: 0.1 });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        const mainContent = document.getElementById('main-content');
+        const miniMap = document.getElementById('mini-map-content');
+        const indicator = document.getElementById('scroll-indicator');
+        const rail = document.getElementById('rail');
+        miniMap.appendChild(mainContent.cloneNode(true));
+
+        function syncLayout() {
+            const pageHeight = mainContent.scrollHeight;
+            const scaleFactor = rail.clientWidth / window.innerWidth;
+            miniMap.style.transform = `scale(${scaleFactor})`;
+            rail.style.height = `${Math.min(pageHeight * scaleFactor, window.innerHeight * 0.5)}px`;
+            indicator.style.height = `${rail.clientHeight * (window.innerHeight / pageHeight)}px`;
+        }
+        const resizeObserver = new ResizeObserver(() => syncLayout());
+        resizeObserver.observe(mainContent);
+        window.addEventListener('load', () => { syncLayout(); setTimeout(syncLayout, 500); });
+        window.addEventListener('resize', syncLayout);
+        syncLayout();
+
+        lenis.on('scroll', (e) => {
+            const scrollPercent = e.progress;
+            indicator.style.transform = `translateY(${scrollPercent * (rail.clientHeight - indicator.clientHeight)}px)`;
+            const scaleFactor = rail.clientWidth / window.innerWidth;
+            const scaledHeight = mainContent.scrollHeight * scaleFactor;
+            if (scaledHeight > rail.clientHeight) {
+                miniMap.style.top = `-${(scaledHeight - rail.clientHeight) * scrollPercent}px`;
+            }
+        });
+    </script>
+</body>
+
+</html>

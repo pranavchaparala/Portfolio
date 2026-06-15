@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQ1FRLB07W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZQ1FRLB07W');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiments — Pranav Chaparala</title>
+    <meta name="description" content="Generative coding, motion design, and creative technology experiments by Pranav Chaparala.">
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Umami Analytics -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- STABLE FIXED NAVIGATION BAR -->
+    <header>
+        <a href="index.html" class="header-block logo-block">pranavchaparala<span>.com</span></a>
+        <div class="header-block tagline-block">Designer and Creative Technologist working across different mediums and scales.</div>
+        <nav>
+            <a href="index.html" class="nav-btn">Projects <span class="count">11</span></a>
+            <a href="experiments.html" class="nav-btn active">Experiments <span class="count" id="experiments-count">0</span></a>
+            <a href="about.html" class="nav-btn">About</a>
+        </nav>
+    </header>
+
+    <!-- Section Title -->
+    <h1 class="page-title">Experiments <span>|</span> <span id="experiments-count-title">0</span> <span>|</span> Play &amp; Motion</h1>
+
+    <main class="projects-wrapper">
+        <div id="experiments-section">
+            <!-- Dynamically populated via experiments.js -->
+        </div>
+    </main>
+
+    <!-- EXPERIMENT MODAL — same structure as case study modal -->
+    <div class="modal-overlay" id="experiment-modal">
+        <div class="modal-sheet exp-modal-sheet" id="experiment-modal-sheet">
+
+            <!-- Minimap Rail — same as projects, appears on expanded -->
+            <div class="modal-right-progress-rail" id="exp-modal-rail">
+                <div class="modal-right-viewport-window" id="exp-modal-viewport-indicator"></div>
+                <div class="modal-mini-map-blueprint" id="exp-modal-mini-map"></div>
+            </div>
+
+            <div class="modal-inner-content-frame">
+                <!-- Sticky header bar -->
+                <div class="modal-sticky-header">
+                    <div class="modal-nav-header-container">
+                        <div class="header-block modal-project-title" id="experiment-modal-title">Experiment Title</div>
+                        <button class="nav-btn" onclick="closeExperimentModal(event)">Close View</button>
+                    </div>
+                </div>
+
+                <!-- Content: fits in viewport without scrolling when not expanded -->
+                <div class="modal-body-scroller-content exp-modal-body" id="exp-modal-body">
+                    <div class="modal-content-container exp-modal-content" id="exp-modal-dynamic-body">
+
+                        <!-- Media fills available space, constrained to viewport -->
+                        <div class="exp-modal-media-wrap" id="experiment-media-container">
+                            <!-- Injected by JS -->
+                        </div>
+
+                        <!-- Metadata panels — same design as projects -->
+                        <div class="exp-modal-meta-row" id="exp-modal-meta">
+                            <!-- Injected by JS -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="projects.js"></script>
+    <script src="experiments.js"></script>
+</body>
+</html>

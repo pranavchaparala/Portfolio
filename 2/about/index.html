@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQ1FRLB07W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-ZQ1FRLB07W');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Pranav Chaparala</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <script defer src="https://cloud.umami.is/script.js"
+        data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../project.css">
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <meta name="project-img" content="me.png">
+</head>
+
+<body>
+
+    <nav id="work-list">
+        <span class="section-label">Work</span>
+        <ul></ul>
+    </nav>
+    <div class="page-content">
+        <main id="main-content">
+            <div class="case-study-container" id="project-container">
+                <h1>Pranav Chaparala</h1>
+                <p class="body-text">
+                    Product Designer based in NYC with experience in crafting impactful products.
+                    Currently Pursuing an MFA in Design & Technology at Parsons School of Design.
+                </p>
+
+                <hr>
+                <div class="two-col-text" style="gap: 40px; margin: 0;">
+                    <div>
+                        <span class="meta-label" style="display: block; margin-bottom: 8px;">Contact</span>
+                        <span class="meta-value"><a href="mailto:pranavchaparala@gmail.com"
+                                style="color: inherit; text-decoration: none;">pranavchaparala@gmail.com</a></span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <span class="meta-value"><a
+                                href="https://drive.google.com/uc?export=download&id=1ry9SKoEx5cpskW3K9lFgc1BD4zF4ZJUA"
+                                target="_blank" style="color: inherit; text-decoration: none;">Resume ↗</a></span>
+                        <span class="meta-value"><a href="https://linkedin.com/in/pranavchaparala" target="_blank"
+                                style="color: inherit; text-decoration: none;">LinkedIn ↗</a></span>
+                    </div>
+                </div>
+                <hr>
+
+                <h2 style="margin-top: 20px;">Education</h2>
+                <p class="body-text" style="margin-bottom: 8px;">Parsons School of Design, New York (2024 - 2026)</p>
+                <p class="body-text">National Institute of Fashion Technology, India (2019 - 2023)</p>
+
+                <hr>
+                <h2 style="margin-top: 20px;">Work</h2>
+                <div class="list-section" style="margin-bottom: 0;">
+                    <p class="body-text" style="margin-bottom: 8px;">DigitalOcean</p>
+                    <p class="body-text" style="margin-bottom: 8px;">OnePlus</p>
+                    <p class="body-text" style="margin-bottom: 8px;">Noise</p>
+                    <p class="body-text" style="margin-bottom: 8px;">WTFRuchit Studios</p>
+                    <p class="body-text">SĀR Studio</p>
+                </div>
+
+                <hr>
+                <h2 style="margin-top: 20px;">Recognition</h2>
+                <div class="two-col-text" style="gap: 40px;">
+                    <div>
+                        <p class="body-text" style="margin-bottom: 8px;">NIFT Best Academic Performance ‘23</p>
+                        <p class="body-text">NIFT Meritorious Student ‘23</p>
+                    </div>
+                    <div>
+                        <p class="body-text" style="margin-bottom: 8px;">Speaker at Salesforce Design Days 23</p>
+                        <p class="body-text">Spectrum ‘22 - Design Lead</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="nav-rail" id="rail">
+        <div id="scroll-indicator"></div>
+        <div id="mini-map-content"></div>
+    </div>
+
+    <script src="../projects.js"></script>
+    <script src="../cursor.js"></script>
+    <script src="../components.js"></script>
+
+    <script>
+        const lenis = new Lenis({ duration: 1.2, lerp: 0.1 });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        const mainContent = document.getElementById('main-content');
+        const miniMap = document.getElementById('mini-map-content');
+        const indicator = document.getElementById('scroll-indicator');
+        const rail = document.getElementById('rail');
+        miniMap.appendChild(mainContent.cloneNode(true));
+
+        function syncLayout() {
+            const pageHeight = mainContent.scrollHeight;
+            const scaleFactor = rail.clientWidth / window.innerWidth;
+            miniMap.style.transform = `scale(${scaleFactor})`;
+            rail.style.height = `${Math.min(pageHeight * scaleFactor, window.innerHeight * 0.5)}px`;
+            indicator.style.height = `${rail.clientHeight * (window.innerHeight / pageHeight)}px`;
+        }
+        const resizeObserver = new ResizeObserver(() => syncLayout());
+        resizeObserver.observe(mainContent);
+        window.addEventListener('load', () => { syncLayout(); setTimeout(syncLayout, 500); });
+        window.addEventListener('resize', syncLayout);
+        syncLayout();
+
+        lenis.on('scroll', (e) => {
+            const scrollPercent = e.progress;
+            indicator.style.transform = `translateY(${scrollPercent * (rail.clientHeight - indicator.clientHeight)}px)`;
+            const scaleFactor = rail.clientWidth / window.innerWidth;
+            const scaledHeight = mainContent.scrollHeight * scaleFactor;
+            if (scaledHeight > rail.clientHeight) {
+                miniMap.style.top = `-${(scaledHeight - rail.clientHeight) * scrollPercent}px`;
+            }
+        });
+    </script>
+</body>
+
+</html>

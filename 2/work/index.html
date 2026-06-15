@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQ1FRLB07W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-ZQ1FRLB07W');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work | Pranav Chaparala</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <script defer src="https://cloud.umami.is/script.js"
+        data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        #hover-image-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            /* Background layer */
+            opacity: 0;
+            visibility: hidden;
+            background: #ffffff;
+            /* White background for the overlay */
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        /* Hover container active state */
+        #hover-image-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #hover-bg-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(20px) brightness(0.9);
+            transform: scale(1.1);
+            z-index: 1;
+            /* [ADJUST OPACITY HERE] - Background blur opacity when hovering projects */
+            opacity: 0.25;
+        }
+
+        /* 2. THE FLOATING PREVIEW IMAGE (for side list) */
+        #hover-preview {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            width: 400px;
+            height: 300px;
+            object-fit: cover;
+            transform: translate(-50%, -50%) scale(0.95);
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+            z-index: 2;
+            opacity: 0;
+        }
+
+        .project-grid {
+            transition: opacity 0.3s ease;
+        }
+
+        .project-grid.grid-fade-out {
+            opacity: 0;
+        }
+
+        /* Hide preview if src is empty (avoids broken icons or redundant pop-ups) */
+        #hover-preview[src=""],
+        #hover-preview:not([src]) {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="loading scrollable">
+
+    <div id="hover-image-container">
+        <img src="" id="hover-bg-blur" alt="">
+        <img src="" id="hover-preview" alt="">
+    </div>
+
+    <nav id="work-list">
+        <ul>
+        </ul>
+    </nav>
+    <div class="page-content">
+        <!-- Filter bar -->
+        <div class="filter-bar" id="filter-bar">
+            <button class="filter-btn active" data-filter="all">All</button>
+        </div>
+        <div class="project-grid" id="grid-container">
+            <!-- Populated via script -->
+        </div>
+    </div>
+
+    <script src="../projects.js"></script>
+    <script src="../cursor.js"></script>
+    <script src="../components.js?v=2"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('grid-container');
+            const filterBar = document.getElementById('filter-bar');
+            const hoverContainer = document.getElementById('hover-image-container');
+            const hoverBg = document.getElementById('hover-bg-blur');
+
+            if (!projectsData || !container) return;
+
+            // Collect all unique tags and build filter buttons
+            const allTags = new Set();
+            projectsData.forEach(p => (p.tags || []).forEach(t => allTags.add(t)));
+            allTags.forEach(tag => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.dataset.filter = tag;
+                btn.textContent = tag;
+                filterBar.appendChild(btn);
+            });
+
+            // Build grid items
+            const gridItems = [];
+            projectsData.forEach(project => {
+                const item = document.createElement('a');
+                item.className = 'grid-item';
+                const isExternal = project.link.startsWith('http');
+                item.href = isExternal ? project.link : '../' + project.link;
+                if (isExternal) item.target = '_blank';
+                item.dataset.tags = (project.tags || []).join(',');
+
+                const tagsHTML = (project.tags || []).map(t =>
+                    `<span class="project-tag">${t}</span>`
+                ).join('');
+
+                item.innerHTML = `
+                    <div class="grid-thumb">
+                        <img src="../covers/${project.gridImg || project.img}" alt="${project.title}">
+                    </div>
+                    <div class="grid-info">
+                        <span class="grid-title">${project.title}</span>
+                        <div class="grid-tags">${tagsHTML}</div>
+                    </div>
+                `;
+
+                container.appendChild(item);
+                gridItems.push(item);
+
+                // Hover: blur background + dim others (like homepage)
+                item.addEventListener('mouseenter', () => {
+                    const isTouch = window.innerWidth <= 1024;
+                    if (isTouch) return;
+
+                    if (hoverBg) hoverBg.src = `../covers/${project.img}`;
+                    // Clear the preview image so it doesn't pop up for grid items
+                    const hoverPreview = document.getElementById('hover-preview');
+                    if (hoverPreview) hoverPreview.src = '';
+
+                    if (hoverContainer) hoverContainer.classList.add('active');
+
+                    gridItems.forEach(gi => {
+                        if (gi !== item) gi.classList.add('grid-dimmed');
+                    });
+                });
+                item.addEventListener('mouseleave', () => {
+                    const isTouch = window.innerWidth <= 1024;
+                    if (isTouch) return;
+
+                    if (hoverContainer) hoverContainer.classList.remove('active');
+                    gridItems.forEach(gi => gi.classList.remove('grid-dimmed'));
+                });
+            });
+
+            // Filter logic with dissolve effect
+            filterBar.addEventListener('click', (e) => {
+                const btn = e.target.closest('.filter-btn');
+                if (!btn) return;
+
+                filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.dataset.filter;
+
+                // 1. Dissolve Out
+                container.classList.add('grid-fade-out');
+
+                setTimeout(() => {
+                    // 2. Filter items
+                    gridItems.forEach(item => {
+                        const tags = item.dataset.tags.split(',');
+                        if (filter === 'all' || tags.includes(filter)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+
+                    // 3. Dissolve In
+                    container.classList.remove('grid-fade-out');
+                }, 300); // Wait for fade out duration
+            });
+        });
+    </script>
+</body>
+
+</html>

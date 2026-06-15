@@ -1,0 +1,1244 @@
+/* --- 1. RESET & BASE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    cursor: none;
+}
+
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --footer-text-color: #000000;
+    --card-bg: #f0f0f0;
+    --blur-overlay: rgba(255, 255, 255, 0.25);
+}
+
+html,
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    font-size: 18px;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    /* Strict lock for home page */
+    touch-action: pan-x;
+    /* Only allow horizontal panning for the carousel */
+}
+
+body {
+    overflow: hidden;
+    /* Reset overflow for home page; project/work will override */
+}
+
+body.scrollable {
+    overflow: auto !important;
+}
+
+/* Hide nav and footer during the initial loading sequence */
+body.loading-page .main-nav,
+body.loading-page .mobile-spatial-nav,
+body.loading-page footer {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+#natural-video-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -1;
+    display: none;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 2s ease;
+}
+
+body.home-page #natural-video-bg {
+    display: block;
+}
+
+body.home-page.carousel-ready #natural-video-bg {
+    opacity: 0.3;
+}
+
+body.home-page {
+    background-color: transparent !important;
+}
+
+/* Home Page specific UI overrides */
+body.home-page .main-nav,
+body.home-page .mobile-spatial-nav a {
+    mix-blend-mode: normal !important;
+}
+
+body.home-page .main-nav a,
+body.home-page .mute-toggle-btn,
+body.home-page .mobile-spatial-nav a {
+    color: #000 !important;
+}
+
+body.home-page #bg,
+body.home-page #bg-blur {
+    display: none !important;
+}
+
+#bg, #bg-blur {
+    display: block;
+}
+
+/* --- 2. THE NAVBAR (LOCKED LOWER AT 80% - ALWAYS VISIBLE) --- */
+/* To adjust the position of the navbar, change the 'top' percentage value below.
+   A higher value moves it lower, a lower value moves it higher up the screen. */
+.main-nav {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    transform: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    mix-blend-mode: difference;
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.nav-right-links {
+    display: flex;
+    gap: 32px;
+}
+
+.mobile-spatial-nav {
+    display: none;
+}
+
+.mobile-only {
+    display: none;
+    /* Hidden on desktop by default, shown via media query */
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+@media (hover: hover) {
+    .main-nav a:hover {
+        opacity: 0.4;
+    }
+}
+
+.active-link {
+    text-decoration: underline !important;
+    text-underline-offset: 4px;
+}
+
+/* Mute toggle button: styled to match nav links */
+.mute-toggle-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #fff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: none;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+.mute-toggle-btn:hover,
+.theme-toggle-btn:hover {
+    opacity: 0.4;
+}
+
+/* --- 3. GLOBAL DISSOLVE ANIMATION (SLOWED DOWN) --- */
+@keyframes contentDissolve {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-content {
+    /* Increased from 1.2s to 2.2s for a slower dissolve */
+    animation: contentDissolve 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: opacity, transform;
+}
+
+/* --- 4. GALLERY (INDEX ONLY) --- */
+#bg {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+#bg-blur {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s;
+}
+
+#bg-blur img {
+    width: 115%;
+    height: 115%;
+    position: absolute;
+    top: -7.5%;
+    left: -7.5%;
+    object-fit: cover;
+    filter: blur(20px) brightness(1.05);
+}
+
+/* Stage: cards are absolutely positioned here */
+#stage {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.card {
+    position: absolute;
+    top: 45%;
+    background: var(--card-bg);
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: auto;
+    transition: opacity 0.3s, background 0.3s, border 0.3s;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translate3d(0, 0, 0);
+}
+
+.card.p {
+    width: 280px;
+    height: 395px;
+    margin-top: -197px;
+}
+
+.card.l {
+    width: 390px;
+    height: 255px;
+    margin-top: -127px;
+}
+
+.pan {
+    position: absolute;
+    top: 0;
+    left: -25%;
+    width: 150%;
+    height: 100%;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    will-change: transform;
+}
+
+.pan img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* The new 'dimmed' state for non-hovered cards */
+.card.dimmed {
+    opacity: 0.3 !important;
+    /* Forces lower opacity for dimmed state */
+}
+
+.card.dimmed .pan {
+    opacity: 0.3 !important;
+    /* Lowers image opacity while keeping the fill */
+}
+
+/* Fake overlay for loading sequence */
+#overlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.fake {
+    position: absolute;
+    background: var(--card-bg);
+    overflow: hidden;
+    left: 50%;
+    top: 45%;
+    transform: scale(0);
+    transform-origin: center center;
+}
+
+.fake.p {
+    width: 280px;
+    height: 395px;
+    margin-left: -140px;
+    margin-top: -197.5px;
+}
+
+.fake.l {
+    width: 390px;
+    height: 255px;
+    margin-left: -195px;
+    margin-top: -127.5px;
+}
+
+.fake .pan {
+    position: absolute;
+    top: 0;
+    left: -25%;
+    width: 150%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.fake .pan img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+footer {
+    position: fixed;
+    width: 100%;
+    padding: 0 16px 16px 16px;
+    /* Matched to nav 16px */
+    display: flex;
+    justify-content: space-between;
+    z-index: 10000;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    align-items: flex-end;
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.footer-left {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    color: var(--footer-text-color);
+    max-width: 600px;
+    text-align: left;
+}
+
+.footer-right {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    color: var(--footer-text-color);
+    text-align: right;
+}
+
+
+#clock {
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
+/* --- 4b. ACTIVE PROJECT TITLE (NOW GLOBAL) --- */
+#active-project-title {
+    position: fixed;
+    top: 10%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-color);
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.project-subheading {
+    font-size: 12px;
+    opacity: 0.4;
+    margin-bottom: 8px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+body.page-loaded #active-project-title {
+    /* Base for mobile/initial, desktop will override with JS controlled opacity */
+}
+
+
+/* --- 5. WORK PAGE LIST --- */
+#work-list {
+    position: fixed;
+    top: 60px;
+    /* Aligned to filter bar */
+    left: 16px;
+    /* Match Navbar left padding */
+    z-index: 2000;
+}
+
+
+.section-label {
+    display: none;
+}
+
+#work-list ul {
+    list-style: none;
+}
+
+#work-list li a {
+    font-size: 12px;
+    /* Slightly larger */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    transition: opacity 0.2s ease;
+    text-decoration: none;
+    color: #000;
+    display: block;
+    margin-bottom: 8px;
+    margin-left: 4px;
+    /* More spacing between items */
+}
+
+@media (hover: hover) {
+    #work-list li:hover {
+        opacity: 0.4;
+    }
+
+    .back-btn-center:hover {
+        opacity: 0.5;
+    }
+}
+
+.mobile-work-cover {
+    display: none;
+}
+
+/* --- 6. PHYSICS CURSOR --- */
+#cursor-svg {
+    mix-blend-mode: difference;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000000;
+}
+
+#cursor-square-loader {
+    mix-blend-mode: difference;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    z-index: 1000001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: transform;
+}
+
+.loader-rect {
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid #fff;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 0px;
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: absolute;
+}
+
+body.loaded .loader-rect {
+    background-color: #fff;
+}
+
+#open-project-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13px;
+    /* Smaller as requested */
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+
+    /* text visibility states */
+    color: transparent;
+    transition: color 0.15s ease-in-out;
+    padding: 0;
+    background: none;
+    display: block;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+}
+
+/* --- CURSOR HINT (scroll/drag to explore) --- */
+@keyframes cursorHintBreathe {
+    0% {
+        opacity: 0;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+#cursor-hint {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 300000;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #000;
+    white-space: nowrap;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+#cursor-hint.visible {
+    animation: cursorHintBreathe 2s ease-in-out infinite;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    #cursor-hint {
+        display: none !important;
+    }
+}
+
+/* --- 7. PAGE TRANSITIONS --- */
+.page-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #ffffff;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.6s cubic-bezier(0.87, 0, 0.13, 1);
+    will-change: opacity;
+}
+
+body.page-loaded .page-transition-overlay {
+    opacity: 0;
+}
+
+body.page-leaving .page-transition-overlay {
+    opacity: 1;
+}
+
+/* Base fade for contents */
+.page-content,
+#gallery-wrap {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.8s ease 0.2s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+}
+
+body.page-loaded .page-content,
+body.page-loaded #gallery-wrap {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body.page-leaving .page-content,
+body.page-leaving #gallery-wrap {
+    opacity: 0;
+    transform: translateY(-15px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* --- 8. RESPONSIVE DESIGN --- */
+
+/* Tablet (max-width: 1024px) */
+@media (max-width: 1024px) {
+
+    /* Slightly smaller gallery items */
+    .card.p {
+        width: 170px;
+        height: 240px;
+        margin-top: -120px;
+    }
+
+    .card.l {
+        width: 260px;
+        height: 170px;
+        margin-top: -85px;
+    }
+
+    .main-nav {
+        gap: 20px;
+    }
+
+    /* Project Pages: Adjust container max-width */
+    .case-study-container {
+        width: 70vw;
+    }
+}
+
+/* --- 9. MOBILE & TABLET (Unified) --- */
+@media (max-width: 1024px) {
+
+    /* Desktop Nav Hide */
+    .desktop-only {
+        display: none !important;
+    }
+
+    /* Spatial Nav Show */
+    .mobile-spatial-nav,
+    .mobile-only {
+        display: block;
+        opacity: 0;
+    }
+
+
+    .mobile-spatial-nav a {
+        position: fixed;
+        z-index: 10001;
+        text-decoration: none;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        mix-blend-mode: difference;
+        touch-action: manipulation;
+        /* Ensure no hover transition on mobile to prevent double-tap issues */
+    }
+
+    .nav-top-left {
+        top: 20px;
+        left: 20px;
+    }
+
+    .nav-top-right {
+        top: 20px;
+        right: 20px;
+    }
+
+    .nav-top-center {
+        top: 20px;
+        right: 80px;
+        /* Moved closer to Play on the right */
+        font-size: 11px !important;
+    }
+
+    .nav-bottom-left {
+        bottom: 20px;
+        left: 20px;
+    }
+
+    .nav-bottom-center {
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+    }
+
+    .nav-bottom-right {
+        bottom: 20px;
+        right: 20px;
+    }
+
+    /* Mobile mute button adopts spatial nav positioning */
+    .mobile-spatial-nav .mute-toggle-btn {
+        position: fixed;
+        z-index: 10001;
+        mix-blend-mode: difference;
+        touch-action: manipulation;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    /* Footer Unification */
+    footer {
+        display: flex !important;
+        opacity: 0;
+        /* Default hidden, but shown in revealCarousel */
+        padding: 20px !important;
+        pointer-events: none;
+        position: fixed;
+        bottom: 15vh;
+        /* Moved higher per request */
+        width: 100vw;
+        left: 0;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+    .footer-left {
+        max-width: 90vw;
+        text-align: center !important;
+    }
+
+    .footer-right,
+    #clock {
+        display: none !important;
+    }
+
+    .footer-left,
+    .footer-right {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        line-height: 1.4;
+    }
+
+    .footer-left {
+        max-width: 90vw;
+    }
+
+    /* Work List Overrides */
+    body.scrollable #work-list {
+        display: none !important;
+    }
+
+    #work-list {
+        /* This stays for project pages */
+        display: block !important;
+        position: relative !important;
+        top: 40px !important;
+        left: 0 !important;
+        width: 100vw;
+        padding: 0 20px 60px 20px;
+        z-index: 50;
+    }
+
+    .section-label {
+        display: none !important;
+    }
+
+    #work-list ul {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px 15px;
+    }
+
+    /* Project Page container */
+    .case-study-container {
+        width: 90vw;
+        padding-top: 40px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Work page and project page specific scrolling */
+    body.scrollable,
+    html.scrollable {
+        overflow-y: auto !important;
+        touch-action: auto !important;
+    }
+
+    .meta-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Carousel position */
+    .card,
+    .fake {
+        top: 42% !important;
+        /* Decreased from 48% to shift higher on mobile */
+    }
+
+    .card.p,
+    .fake.p {
+        width: 220px;
+        height: 308px;
+        margin-top: -154px;
+    }
+
+    .card.l,
+    .fake.l {
+        width: 280px;
+        height: 210px;
+        margin-top: -105px;
+    }
+
+    /* Active Project Title (Mobile Overrides) */
+    #active-project-title {
+        top: 15%;
+        opacity: 0;
+    }
+
+    body.page-loaded #active-project-title {
+        opacity: 1;
+    }
+}
+
+
+
+/* Disable Hover and Custom Cursor on Mobile Devices */
+@media (hover: none) and (pointer: coarse) {
+
+    #cursor-svg,
+    #cursor-square-loader {
+        display: none !important;
+    }
+
+    * {
+        cursor: auto !important;
+    }
+
+    #hover-image-container {
+        display: none !important;
+    }
+}
+
+/* --- Hide back button on desktop --- */
+@media (min-width: 1025px) {
+    .back-btn-center {
+        display: none !important;
+    }
+}
+
+/* --- Work Page Grid --- */
+
+/* Full-screen blur background for work page hover */
+#work-bg-blur {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0;
+    background: #ffffff;
+    /* White background behind the blur */
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+}
+
+#work-bg-blur img,
+#hover-bg-blur {
+    width: 115%;
+    height: 115%;
+    position: absolute;
+    top: -7.5%;
+    left: -7.5%;
+    object-fit: cover;
+    filter: blur(30px) brightness(1.2);
+    /* Increased brightness for white look */
+}
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 80px 40px 0 40px;
+    width: 100%;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+    /* Stays above blur */
+}
+
+@media (max-width: 1024px) {
+    .filter-bar {
+        margin-left: 0;
+        width: 100%;
+        padding: 60px 16px 0 16px;
+        gap: 4px;
+        /* Bring them closer */
+        justify-content: center;
+    }
+
+    .filter-btn {
+        padding: 10px 4px !important;
+        touch-action: manipulation;
+    }
+}
+
+.filter-btn {
+    background: none;
+    border: none;
+    padding: 12px 6px;
+    /* Increased vertical padding for touch */
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    font-family: inherit;
+    color: var(--text-color);
+    /* Make the interactive area larger without shifting layout */
+    margin-top: -6px;
+    margin-bottom: -6px;
+    opacity: 0.5;
+}
+
+.filter-btn:hover {
+    opacity: 1;
+}
+
+.filter-btn.active {
+    opacity: 1;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    padding: 40px;
+    width: 100%;
+    margin-left: 0;
+    position: relative;
+    z-index: 2;
+    /* Increased to stay above blur */
+}
+
+@media (max-width: 1024px) {
+    .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+        width: 100%;
+        margin-left: 0;
+        padding: 30px 16px 40px 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .project-grid {
+        grid-template-columns: 1fr;
+        padding: 30px 16px 40px 16px;
+    }
+}
+
+.grid-item {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: opacity 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.grid-item:hover {
+    /* No lift — blur + dim effect handles the interaction */
+}
+
+.grid-item.grid-dimmed {
+    opacity: 0.3;
+}
+
+.grid-thumb {
+    width: 100%;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    background: #f0f0f0;
+}
+
+.grid-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.grid-item:hover .grid-thumb img {
+    transform: scale(1.03);
+}
+
+.grid-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.grid-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+    letter-spacing: -0.01em;
+}
+
+.grid-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.project-tag {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #999;
+}
+
+/* --- About Modal --- */
+.about-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.98);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    /* Vertically centered for no-scroll balanced look */
+    justify-content: center;
+    padding: 20px;
+    /* Tighter padding for mobile/small screens */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, visibility 0.6s;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    will-change: opacity;
+    backface-visibility: hidden;
+}
+
+.about-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.about-content {
+    width: 100%;
+    max-width: 900px;
+    /* Slightly wider to accommodate 3 columns */
+    text-align: left;
+    will-change: transform, opacity;
+    transform: translate3d(0, 0, 0);
+}
+
+.about-content h1 {
+    font-size: 28px;
+    /* Slightly smaller for density */
+    text-transform: none;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+    /* Tighter */
+    font-weight: 500;
+}
+
+.about-content h2 {
+    font-size: 12px;
+    /* Smaller labels */
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 30px 0 12px;
+    /* Tighter */
+    letter-spacing: 0.05em;
+    color: #707070;
+}
+
+.about-content p {
+    font-size: 16px;
+    /* Slightly smaller for density */
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.about-content hr {
+    border: none;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+    margin: 25px 0;
+    /* Tighter */
+}
+
+.about-content .three-col-text {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.about-content .two-col-text {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.about-content .meta-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+@media (max-width: 900px) {
+    .about-modal {
+        padding: 40px 10px;
+        /* Even tighter padding */
+    }
+
+    .about-content {
+        width: 90%;
+        /* Fixed: Ensuring background is visible for tap-to-close */
+        max-width: 400px;
+        padding: 0;
+    }
+
+    .about-content h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+
+    .about-content p {
+        font-size: 12px;
+        /* Tighter text */
+        line-height: 1.4;
+        margin-bottom: 8px;
+    }
+
+    .about-content h2 {
+        margin: 15px 0 8px;
+        /* Tighter headers */
+        font-size: 11px;
+    }
+
+    .about-content hr {
+        margin: 15px 0;
+    }
+
+    .about-content .three-col-text,
+    .about-content .two-col-text {
+        grid-template-columns: 1fr 1fr;
+        /* Switched from 1fr to avoid long scrolls */
+        gap: 12px 20px;
+        /* Tighter grid gaps */
+    }
+}
+
+/* Close Button Stylings */
+.modal-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 11px;
+    /* Matched to mobile nav size */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 10px;
+    color: #000;
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+    z-index: 100001;
+    font-family: inherit;
+    /* Ensure same font as site */
+}
+
+.modal-hint {
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .modal-hint {
+        display: none !important;
+        /* Remove click anywhere on mobile */
+    }
+}
+
+@media (hover: hover) {
+    .modal-close-btn:hover {
+        opacity: 1;
+    }
+}
+
+.about-content .two-col-text {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.about-content .meta-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #707070;
+}
+
+@media (max-width: 768px) {
+    .about-modal {
+        padding: 60px 20px;
+    }
+
+    .about-content .two-col-text {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+/* --- Cursor Hint --- */
+#drag-explore-hint {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+body.index-page #drag-explore-hint.visible {
+    opacity: 0.5;
+}

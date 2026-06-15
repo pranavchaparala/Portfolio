@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQ1FRLB07W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZQ1FRLB07W');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pranav Chaparala — Designer & Creative Technologist</title>
+    <meta name="description" content="Portfolio of Pranav Chaparala, Product Designer and Creative Technologist based in NYC, showcasing product design case studies, generative coding experiments, and physical interface installations.">
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Umami Analytics -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- STABLE FIXED NAVIGATION BAR -->
+    <header>
+        <a href="index.html" class="header-block logo-block">pranavchaparala<span>.com</span></a>
+        <div class="header-block tagline-block">Designer and Creative Technologist working across different mediums and scales.</div>
+        <nav>
+            <a href="index.html" class="nav-btn active">Projects <span class="count" id="projects-count">0</span></a>
+            <a href="experiments.html" class="nav-btn">Experiments <span class="count">19</span></a>
+            <a href="about.html" class="nav-btn">About</a>
+        </nav>
+    </header>
+
+    <!-- Section Title -->
+    <h1 class="page-title" id="page-title-text">Projects <span>|</span> <span id="projects-count-title">0</span> <span>|</span> 2021 – 26</h1>
+
+    <main class="projects-wrapper">
+        <div id="projects-section">
+            <!-- Dynamically populated via app.js -->
+        </div>
+    </main>
+
+    <!-- CASE STUDY OVERLAY MODAL -->
+    <div class="modal-overlay" id="case-study-modal">
+        <div class="modal-sheet" id="modal-sheet-node">
+            <!-- Dynamic viewport indicator progress tracker minimap -->
+            <div class="modal-right-progress-rail" id="modal-rail">
+                <div class="modal-right-viewport-window" id="modal-viewport-indicator"></div>
+                <div class="modal-mini-map-blueprint" id="modal-mini-map-content"></div>
+            </div>
+
+            <div class="modal-inner-content-frame">
+                <div class="modal-sticky-header">
+                    <div class="modal-nav-header-container">
+                        <div class="header-block modal-project-title" id="modal-title-target">Project Architectural Overview</div>
+                        <a class="nav-btn active" id="modal-action-btn" target="_blank">Live Website ↗</a>
+                        <button class="nav-btn" onclick="closeCaseStudy(event)">Close View</button>
+                    </div>
+                </div>
+
+                <div class="modal-body-scroller-content">
+                    <div class="modal-content-container" id="modal-dynamic-body-target">
+                        <!-- Dynamically Injected case study details -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="projects.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
