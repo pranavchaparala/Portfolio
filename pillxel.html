@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pill Mosaic</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f0ede8; --surface: #e8e4de; --border: rgba(0,0,0,0.1);
+    --text: #1a1a1a; --muted: #888; --radius: 8px;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+  body { background: var(--bg); font-family: var(--mono); color: var(--text); min-height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+  header { padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 13px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+  header span { font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+  .workspace { display: grid; grid-template-columns: 260px 1fr; height: calc(100vh - 53px); }
+  .sidebar { border-right: 1px solid var(--border); padding: 20px 18px; display: flex; flex-direction: column; gap: 22px; overflow-y: auto; }
+  .section-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .drop-zone { border: 1.5px dashed var(--border); border-radius: var(--radius); padding: 22px 12px; text-align: center; cursor: pointer; font-size: 12px; color: var(--muted); transition: background 0.15s; line-height: 1.7; }
+  .drop-zone:hover, .drop-zone.over { background: var(--surface); }
+  .drop-zone input { display: none; }
+  .file-name { font-size: 11px; color: var(--muted); padding: 6px 8px; background: var(--surface); border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: none; margin-top: 8px; }
+  .control { display: flex; flex-direction: column; gap: 6px; }
+  .control-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+  .control-row label { color: var(--muted); }
+  .control-row span { font-weight: 500; min-width: 32px; text-align: right; font-size: 11px; }
+  input[type=range] { width: 100%; accent-color: var(--text); cursor: pointer; }
+  .color-toggle { display: flex; background: var(--surface); border-radius: 6px; padding: 3px; gap: 3px; }
+  .color-toggle button { flex: 1; border: none; border-radius: 4px; padding: 6px 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; cursor: pointer; background: transparent; color: var(--muted); transition: background 0.15s, color 0.15s; }
+  .color-toggle button.active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .video-controls { display: none; flex-direction: column; gap: 10px; }
+  .video-controls.visible { display: flex; }
+  .frame-row { display: flex; align-items: center; gap: 8px; }
+  .frame-row input[type=range] { flex: 1; }
+  .frame-num { font-size: 11px; color: var(--muted); min-width: 40px; text-align: right; }
+  .btn { width: 100%; border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.05em; cursor: pointer; background: #fff; color: var(--text); transition: background 0.15s; }
+  .btn:hover { background: var(--surface); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn-primary:hover { background: #333; }
+  .export-group { display: flex; flex-direction: column; gap: 8px; }
+  .preview { display: flex; align-items: center; justify-content: center; overflow: auto; background: var(--bg); position: relative; }
+  #preview-svg { display: block; max-width: 100%; max-height: calc(100vh - 53px); }
+  .empty-state { text-align: center; color: var(--muted); font-size: 12px; line-height: 2; letter-spacing: 0.04em; }
+  .empty-state .big { font-size: 32px; margin-bottom: 12px; opacity: 0.3; }
+  #vid-canvas { display: none; }
+  #src-video { display: none; }
+  .status { font-size: 11px; color: var(--muted); text-align: center; min-height: 16px; letter-spacing: 0.03em; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Pill Mosaic</h1>
+  <span>vector export</span>
+</header>
+
+<div class="workspace">
+  <aside class="sidebar">
+
+    <div>
+      <div class="section-label">Source</div>
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        drop image or video<br>
+        <small style="font-size:10px;opacity:0.6">png · jpg · mp4 · webm · mov</small>
+        <input id="file-input" type="file" accept="image/*,video/*">
+      </div>
+      <div class="file-name" id="file-name"></div>
+    </div>
+
+    <div class="video-controls" id="video-controls">
+      <div class="section-label">Frame</div>
+      <div class="frame-row">
+        <input type="range" id="frame-slider" min="0" max="100" value="0" step="0.04">
+        <span class="frame-num" id="frame-time">0.0s</span>
+      </div>
+      <button class="btn" id="btn-scrub">preview this frame</button>
+    </div>
+
+    <div>
+      <div class="section-label">Settings</div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+
+        <div class="control">
+          <div class="control-row"><label>columns</label><span id="v-cols">80</span></div>
+          <input type="range" id="sl-cols" min="10" max="200" value="80" step="1">
+        </div>
+
+        <div class="control">
+          <div class="control-row"><label>pill height</label><span id="v-asp">2.2×</span></div>
+          <input type="range" id="sl-asp" min="5" max="60" value="22" step="1">
+        </div>
+
+        <div class="control">
+          <div class="control-row"><label>gap</label><span id="v-gap">2</span></div>
+          <input type="range" id="sl-gap" min="0" max="8" value="2" step="1">
+        </div>
+
+        <div class="control">
+          <div class="section-label" style="margin-bottom:6px;">color</div>
+          <div class="color-toggle">
+            <button class="active" id="btn-mono" onclick="setMode('mono')">mono</button>
+            <button id="btn-color" onclick="setMode('color')">color</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="margin-top:auto;">
+      <div class="section-label">Export</div>
+      <div class="status" id="status">—</div>
+      <div class="export-group" style="margin-top:10px;">
+        <button class="btn btn-primary" id="btn-svg" disabled onclick="exportSVG()">save svg</button>
+        <button class="btn" id="btn-png" disabled onclick="exportPNG()">save png (2×)</button>
+      </div>
+    </div>
+
+  </aside>
+
+  <main class="preview">
+    <div id="empty-state" class="empty-state">
+      <div class="big">⬡</div>
+      load an image or video<br>to get started
+    </div>
+    <svg id="preview-svg" xmlns="http://www.w3.org/2000/svg" style="display:none"></svg>
+  </main>
+</div>
+
+<canvas id="vid-canvas"></canvas>
+<video id="src-video" playsinline muted></video>
+
+<script>
+  let sourceType = null;
+  let imgEl = null;
+  const vidEl = document.getElementById('src-video');
+  const vidCanvas = document.getElementById('vid-canvas');
+  const vidCtx = vidCanvas.getContext('2d', { willReadFrequently: true });
+  let lastSVGString = null;
+  let colorMode = 'mono';
+  let COLS = 80, PILL_ASP = 2.2, GAP = 2;
+  let sourceReady = false;
+  let renderTimer = null;
+
+  // Source natural dimensions
+  let srcW = 0, srcH = 0;
+
+  // ── sliders ───────────────────────────────────────────────────────────
+  function bindSlider(id, valId, onchange) {
+    const sl = document.getElementById(id);
+    const vl = document.getElementById(valId);
+    sl.addEventListener('input', () => { onchange(+sl.value, vl); scheduleRender(); });
+  }
+
+  bindSlider('sl-cols', 'v-cols', (v, vl) => { COLS = v; vl.textContent = v; });
+  bindSlider('sl-asp',  'v-asp',  (v, vl) => { PILL_ASP = v / 10; vl.textContent = PILL_ASP.toFixed(1) + '×'; });
+  bindSlider('sl-gap',  'v-gap',  (v, vl) => { GAP = v; vl.textContent = v; });
+
+  function setMode(mode) {
+    colorMode = mode;
+    document.getElementById('btn-mono').classList.toggle('active', mode === 'mono');
+    document.getElementById('btn-color').classList.toggle('active', mode === 'color');
+    scheduleRender();
+  }
+
+  function scheduleRender() {
+    if (!sourceReady) return;
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(renderMosaic, 80);
+  }
+
+  // ── file loading ──────────────────────────────────────────────────────
+  const drop = document.getElementById('drop-zone');
+  const fi   = document.getElementById('file-input');
+
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+  fi.addEventListener('change', () => { if (fi.files[0]) loadFile(fi.files[0]); });
+
+  function loadFile(file) {
+    sourceReady = false;
+    setStatus('loading…');
+    document.getElementById('file-name').style.display = 'block';
+    document.getElementById('file-name').textContent = file.name;
+
+    if (file.type.startsWith('video/')) {
+      sourceType = 'video';
+      document.getElementById('video-controls').classList.add('visible');
+      vidEl.src = URL.createObjectURL(file);
+      vidEl.onloadedmetadata = () => {
+        srcW = vidEl.videoWidth; srcH = vidEl.videoHeight;
+        const slider = document.getElementById('frame-slider');
+        slider.max = vidEl.duration.toFixed(2);
+        slider.value = 0;
+        document.getElementById('frame-time').textContent = '0.0s';
+        vidEl.onseeked = () => { sourceReady = true; renderMosaic(); };
+        vidEl.currentTime = 0;
+      };
+    } else {
+      sourceType = 'image';
+      document.getElementById('video-controls').classList.remove('visible');
+      imgEl = new Image();
+      imgEl.onload = () => {
+        srcW = imgEl.naturalWidth; srcH = imgEl.naturalHeight;
+        sourceReady = true;
+        renderMosaic();
+      };
+      imgEl.src = URL.createObjectURL(file);
+    }
+  }
+
+  // ── video scrub ───────────────────────────────────────────────────────
+  const frameSlider = document.getElementById('frame-slider');
+  frameSlider.addEventListener('input', () => {
+    document.getElementById('frame-time').textContent = (+frameSlider.value).toFixed(1) + 's';
+  });
+  document.getElementById('btn-scrub').addEventListener('click', () => {
+    sourceReady = false; setStatus('seeking…');
+    vidEl.onseeked = () => { sourceReady = true; renderMosaic(); };
+    vidEl.currentTime = +frameSlider.value;
+  });
+
+  // ── core render ───────────────────────────────────────────────────────
+  function renderMosaic() {
+    if (!sourceReady) return;
+    setStatus('rendering…');
+
+    setTimeout(() => {
+      // Image aspect ratio is always preserved.
+      // tileW and tileH are independent: tileH = tileW * PILL_ASP
+      // rows is calculated so the full grid matches the source aspect ratio:
+      //   (rows * tileH) / (COLS * tileW) = srcH / srcW
+      //   rows = COLS * (srcH / srcW) * (tileW / tileH)
+      //        = COLS * (srcH / srcW) / PILL_ASP
+
+      const rows = Math.max(1, Math.round(COLS * (srcH / srcW) / PILL_ASP));
+
+      // Sample at exactly COLS×rows — one pixel per tile
+      vidCanvas.width  = COLS;
+      vidCanvas.height = rows;
+      const source = sourceType === 'image' ? imgEl : vidEl;
+      vidCtx.drawImage(source, 0, 0, COLS, rows);
+      const data = vidCtx.getImageData(0, 0, COLS, rows).data;
+
+      // Output tile dimensions
+      const targetW = Math.max(srcW, 1200);
+      const tileW   = Math.max(4, Math.round(targetW / COLS));
+      const tileH   = Math.round(tileW * PILL_ASP);
+
+      // SVG canvas size = grid size, which naturally matches source aspect
+      const svgW = COLS * tileW;
+      const svgH = rows * tileH;
+
+      // Build SVG paths grouped by color
+      const colorPaths = {};
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < COLS; col++) {
+          const idx = (row * COLS + col) * 4;
+          const pr = data[idx], pg = data[idx+1], pb = data[idx+2];
+
+          let color;
+          if (colorMode === 'mono') {
+            const lum = Math.min(255, Math.round(((77*pr + 150*pg + 29*pb) >> 8) * 210 / 255));
+            color = `rgb(${lum},${lum},${lum})`;
+          } else {
+            color = `rgb(${pr},${pg},${pb})`;
+          }
+
+          const g  = GAP;
+          const x  = col * tileW + g;
+          const y  = row * tileH + g;
+          const w  = tileW - g * 2;
+          const h  = tileH - g * 2;
+          const rx = w / 2; // full pill ends (radius = half width)
+
+          const d = `M${x+rx},${y}H${x+w-rx}Q${x+w},${y},${x+w},${y+rx}V${y+h-rx}Q${x+w},${y+h},${x+w-rx},${y+h}H${x+rx}Q${x},${y+h},${x},${y+h-rx}V${y+rx}Q${x},${y},${x+rx},${y}Z`;
+
+          if (!colorPaths[color]) colorPaths[color] = [];
+          colorPaths[color].push(d);
+        }
+      }
+
+      let inner = '';
+      for (const [color, paths] of Object.entries(colorPaths)) {
+        inner += `<path fill="${color}" d="${paths.join(' ')}"/>`;
+      }
+
+      lastSVGString = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">${inner}</svg>`;
+
+      // Update preview
+      const previewSVG = document.getElementById('preview-svg');
+      document.getElementById('empty-state').style.display = 'none';
+      previewSVG.style.display = 'block';
+      previewSVG.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+      previewSVG.setAttribute('width', svgW);
+      previewSVG.setAttribute('height', svgH);
+      previewSVG.innerHTML = inner;
+
+      document.getElementById('btn-svg').disabled = false;
+      document.getElementById('btn-png').disabled = false;
+      setStatus(`${COLS}×${rows} tiles · ${srcW}×${srcH} source`);
+    }, 10);
+  }
+
+  // ── export SVG ────────────────────────────────────────────────────────
+  function exportSVG() {
+    if (!lastSVGString) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([lastSVGString], { type: 'image/svg+xml' }));
+    a.download = 'pill-mosaic.svg'; a.click();
+  }
+
+  // ── export PNG ────────────────────────────────────────────────────────
+  function exportPNG() {
+    if (!lastSVGString) return;
+    setStatus('rasterising…');
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(lastSVGString, 'image/svg+xml');
+    const svgEl  = svgDoc.documentElement;
+    const w = +svgEl.getAttribute('width');
+    const h = +svgEl.getAttribute('height');
+    const scale = 2;
+    const c = document.createElement('canvas');
+    c.width = w * scale; c.height = h * scale;
+    const ctx = c.getContext('2d');
+    const blob = new Blob([lastSVGString], { type: 'image/svg+xml' });
+    const url  = URL.createObjectURL(blob);
+    const img  = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(b => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(b);
+        a.download = 'pill-mosaic.png'; a.click();
+        setStatus('saved ✓');
+      }, 'image/png');
+    };
+    img.src = url;
+  }
+
+  function setStatus(msg) { document.getElementById('status').textContent = msg; }
+</script>
+</body>
+</html>

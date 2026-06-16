@@ -139,27 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const clone = structuralTarget.cloneNode(true);
         clone.removeAttribute('id');
         clone.style.cssText += '; pointer-events:none; overflow:hidden; max-width:100%';
-
-        // Un-crop images: remove fixed heights / object-fit cover from containers and images
-        clone.querySelectorAll('img').forEach(img => {
-            img.style.position   = 'static';
-            img.style.width      = '100%';
-            img.style.height     = 'auto';
-            img.style.maxWidth   = '100%';
-            img.style.objectFit  = 'contain';
-            img.style.display    = 'block';
-        });
-        clone.querySelectorAll('img').forEach(img => {
-            const parent = img.parentElement;
-            if (parent && parent !== clone) {
-                parent.style.position   = 'static';
-                parent.style.height     = 'auto';
-                parent.style.maxHeight  = 'none';
-                parent.style.overflow   = 'visible';
-                parent.style.paddingBottom = '0';
-                parent.style.aspectRatio   = 'unset';
-            }
-        });
         clone.querySelectorAll('video').forEach(v => { v.muted = true; v.removeAttribute('autoplay'); });
         miniMapBlueprint.appendChild(clone);
 

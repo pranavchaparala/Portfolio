@@ -93,7 +93,7 @@
         srcC.width = cw; srcC.height = ch;
         hirC.width = cw; hirC.height = ch;
         // Mobile: +10% columns (÷9 vs ÷10) and shorter pills (ASP 2 vs 3)
-        const cols = Math.max(15, Math.round(cw / (isMobile ? 9 : 10)));
+        const cols = Math.max(15, Math.round(cw / (isMobile ? 8 : 10)));
         curTileW = Math.max(2, Math.floor(cw / cols));
         curTileH = Math.round(curTileW * (isMobile ? 2 : ASP));
         outLogW = Math.floor(cw / curTileW) * curTileW;
