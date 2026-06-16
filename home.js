@@ -68,8 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Bar-graph heights: short → tall → medium, cycling (smaller on mobile)
         const isMobile = window.innerWidth <= 768;
         const barHeights = isMobile
-            ? ['120px', '210px', '165px']
-            : ['180px', '330px', '240px'];
+            ? ['135px', '235px', '185px']
+            : ['200px', '370px', '270px'];
 
         // Helper to create a card (expIdx = real index in experimentsData for click delegation)
         function createExpCard(exp, heightIndex, expIdx) {
@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Event delegation handles clicks on both originals and clones
         carousel.addEventListener('click', (e) => {
+            if (isMobile) return;
             const card = e.target.closest('.experiment-carousel-card');
             if (!card) return;
             const idx = parseInt(card.dataset.expIdx, 10);
@@ -147,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ---- SEAMLESS CONTINUOUS SCROLL ----
         let scrollAnimationId = null;
         let isPaused = false;
-        const SCROLL_SPEED = 0.5;
+        const SCROLL_SPEED = 1.0;
 
         function startContinuousScroll() {
             if (scrollAnimationId) return;
@@ -187,43 +188,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Footer Interactive Logic ---
-    const localTimeEl = document.getElementById('nyc-local-time');
-    const tzListEl = document.getElementById('other-timezones-list');
-
-    function updateClocks() {
-        const now = new Date();
-
-        const nycTimeStr = now.toLocaleTimeString('en-US', {
-            timeZone: 'America/New_York',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-        });
-        if (localTimeEl) {
-            localTimeEl.textContent = `${nycTimeStr} EST`;
-        }
-
-        const zones = [
-            { name: 'San Francisco', zone: 'America/Los_Angeles', label: 'PST' },
-            { name: 'London', zone: 'Europe/London', label: 'BST' },
-            { name: 'Tokyo', zone: 'Asia/Tokyo', label: 'JST' }
-        ];
-
-        if (tzListEl) {
-            tzListEl.innerHTML = zones.map(z => {
-                const zTime = now.toLocaleTimeString('en-US', {
-                    timeZone: z.zone,
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                });
-                return `<div class="timezone-row"><span>${z.name}</span><strong>${zTime} ${z.label}</strong></div>`;
-            }).join('');
-        }
-    }
-
-    updateClocks();
-    setInterval(updateClocks, 1000);
 });

@@ -10,7 +10,7 @@
     wrap.style.cssText = 'position:relative;width:100%;height:100%;overflow:hidden;' + (isMobile ? '' : 'cursor:none;');
     const outC = document.createElement('canvas');
     outC.id = 'pm-out';
-    outC.style.display = 'block';
+    outC.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;display:block;';
     wrap.appendChild(outC);
     container.appendChild(wrap);
 
@@ -37,10 +37,10 @@
     const outX = outC.getContext('2d');
 
     let mx = -9999, my = -9999, lensAlpha = 0;
-    const COLS = isMobile ? 55 : 120;
     const ASP = 3, GAP = 2, LENS = 200;
     let running = false;
     let rafId = null;
+    let outLogW = 0, outLogH = 0, curTileW = 8, curTileH = 24;
     let cameraStream = null;
     let usingCamera = false;
 
@@ -87,18 +87,21 @@
     };
 
     function setup() {
-        const cw = container.clientWidth;
-        if (cw <= 0) return;
-        const scale = Math.min(1, cw / vid.videoWidth);
-        const sw = Math.round(vid.videoWidth * scale), sh = Math.round(vid.videoHeight * scale);
-        if (sw <= 0 || sh <= 0) return;
-        srcC.width = sw; srcC.height = sh;
-        hirC.width = sw; hirC.height = sh;
-        const tileW = Math.max(2, Math.floor(sw / COLS)), tileH = Math.round(tileW * ASP);
-        outC.width = Math.floor(sw / tileW) * tileW;
-        outC.height = Math.floor(sh / tileH) * tileH;
-        outC.style.width = '100%';
-        outC.style.height = 'auto';
+        const cw = wrap.clientWidth;
+        const ch = wrap.clientHeight;
+        if (cw <= 0 || ch <= 0) return;
+        srcC.width = cw; srcC.height = ch;
+        hirC.width = cw; hirC.height = ch;
+        // Mobile: +10% columns (÷9 vs ÷10) and shorter pills (ASP 2 vs 3)
+        const cols = Math.max(15, Math.round(cw / (isMobile ? 9 : 10)));
+        curTileW = Math.max(2, Math.floor(cw / cols));
+        curTileH = Math.round(curTileW * (isMobile ? 2 : ASP));
+        outLogW = Math.floor(cw / curTileW) * curTileW;
+        outLogH = Math.floor(ch / curTileH) * curTileH;
+        const dpr = window.devicePixelRatio || 1;
+        outC.width = outLogW * dpr;
+        outC.height = outLogH * dpr;
+        outX.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     // Responsive: reflow on container resize
@@ -148,8 +151,8 @@
         const hirData = hirX.getImageData(0, 0, hirC.width, hirC.height).data;
         const sw = srcC.width;
 
-        const ow = outC.width, oh = outC.height;
-        const tileW = Math.floor(srcC.width / COLS), tileH = Math.round(tileW * ASP);
+        const ow = outLogW, oh = outLogH;
+        const tileW = curTileW, tileH = curTileH;
         const cols = Math.floor(ow / tileW), rows = Math.floor(oh / tileH);
 
         const rect = outC.getBoundingClientRect();

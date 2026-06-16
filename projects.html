@@ -48,12 +48,13 @@
     </main>
 
     <div class="modal-overlay" id="case-study-modal">
-        <div class="modal-sheet" id="modal-sheet-node">
-            <div class="modal-right-progress-rail" id="modal-rail">
-                <div class="modal-right-viewport-window" id="modal-viewport-indicator"></div>
+        <div class="modal-right-progress-rail" id="modal-rail">
+            <div class="modal-right-viewport-window" id="modal-viewport-indicator"></div>
+            <div class="modal-mini-map-clip" id="modal-mini-map-clip">
                 <div class="modal-mini-map-blueprint" id="modal-mini-map-content"></div>
             </div>
-
+        </div>
+        <div class="modal-sheet" id="modal-sheet-node">
             <div class="modal-inner-content-frame">
                 <div class="modal-sticky-header">
                     <div class="modal-nav-header-container">
@@ -69,6 +70,9 @@
                     <div class="modal-content-container" id="modal-dynamic-body-target">
                     </div>
                 </div>
+                <div class="modal-footer-actions">
+                    <button class="nav-btn" onclick="document.getElementById('modal-sheet-node').scrollTo({top:0,behavior:'smooth'})">Back to top ↑</button>
+                </div>
             </div>
         </div>
     </div>
@@ -76,7 +80,7 @@
     <footer class="site-footer figma-footer">
         <div class="footer-left-group">
             <a href="mailto:pranavchaparala@gmail.com" class="footer-link" data-haptic>pranavchaparala@gmail.com ↗</a>
-            <span class="footer-info">Local Time: <span id="nyc-local-time">05:00:00</span></span>
+            <span class="footer-info">Local Time: <span id="nyc-local-time">--:--:--</span> ET</span>
             <span class="footer-info">Location: New York City</span>
         </div>
         <div class="footer-right-group">
@@ -114,6 +118,7 @@
     <script src="haptics.js"></script>
     <script src="page-transition.js"></script>
     <script src="app.js"></script>
+    <script src="footer.js"></script>
     <script>
         // Tagline marquee: activate if text overflows the container
         function initTaglineMarquee() {

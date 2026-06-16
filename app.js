@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const overlayContainer = document.getElementById('case-study-modal');
     const modalSheet = document.getElementById('modal-sheet-node');
     const miniMapBlueprint = document.getElementById('modal-mini-map-content');
+    const miniMapClip = document.getElementById('modal-mini-map-clip');
     const layoutRail = document.getElementById('modal-rail');
     const structuralTarget = document.getElementById('modal-dynamic-body-target');
     const viewportIndicator = document.getElementById('modal-viewport-indicator');
@@ -122,38 +123,90 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------
     // MINIMAP RAIL SYSTEM
     // -------------------------------------------------------
+    const RAIL_PAD = 8; // px padding — matches CSS inset on .modal-mini-map-clip
+
     function syncRailLayout() {
         if (!structuralTarget || !layoutRail || !miniMapBlueprint || !viewportIndicator) return;
-        const totalHeight = structuralTarget.scrollHeight;
-        const visibleHeight = modalSheet ? modalSheet.clientHeight : window.innerHeight;
-        const railHeight = layoutRail.clientHeight;
-        const ratio = railHeight / totalHeight;
-        const indicatorHeight = Math.max(20, Math.round(visibleHeight * ratio));
-        viewportIndicator.style.height = `${indicatorHeight}px`;
+
+        const pageHeight  = structuralTarget.scrollHeight;
+        const viewportW   = modalSheet ? modalSheet.clientWidth  : window.innerWidth;
+        const railWidth   = layoutRail.clientWidth;
+        const innerW      = railWidth - RAIL_PAD * 2;   // clip area width (matches CSS inset: 8px)
+        const scaleFactor = innerW / viewportW;
+
+        // Clone content into blueprint
         miniMapBlueprint.innerHTML = '';
-        const sections = structuralTarget.querySelectorAll('h1, h2, h3, img, video');
-        sections.forEach(el => {
-            const offsetTop = el.offsetTop;
-            const elHeight = el.offsetHeight;
-            const top = Math.round(offsetTop * ratio);
-            const height = Math.max(2, Math.round(elHeight * ratio));
-            const marker = document.createElement('div');
-            marker.className = 'mini-map-element';
-            if (el.tagName === 'IMG' || el.tagName === 'VIDEO') {
-                marker.className += ' mini-map-media';
-            }
-            marker.style.cssText = `position:absolute;top:${top}px;height:${height}px;left:0;right:0;`;
-            miniMapBlueprint.appendChild(marker);
+        const clone = structuralTarget.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.style.cssText += '; pointer-events:none; overflow:hidden; max-width:100%';
+
+        // Un-crop images: remove fixed heights / object-fit cover from containers and images
+        clone.querySelectorAll('img').forEach(img => {
+            img.style.position   = 'static';
+            img.style.width      = '100%';
+            img.style.height     = 'auto';
+            img.style.maxWidth   = '100%';
+            img.style.objectFit  = 'contain';
+            img.style.display    = 'block';
         });
+        clone.querySelectorAll('img').forEach(img => {
+            const parent = img.parentElement;
+            if (parent && parent !== clone) {
+                parent.style.position   = 'static';
+                parent.style.height     = 'auto';
+                parent.style.maxHeight  = 'none';
+                parent.style.overflow   = 'visible';
+                parent.style.paddingBottom = '0';
+                parent.style.aspectRatio   = 'unset';
+            }
+        });
+        clone.querySelectorAll('video').forEach(v => { v.muted = true; v.removeAttribute('autoplay'); });
+        miniMapBlueprint.appendChild(clone);
+
+        // Blueprint fills viewportW, scales to innerW — positioned at (0,0) inside clip
+        miniMapBlueprint.style.width          = `${viewportW}px`;
+        miniMapBlueprint.style.transform      = `scale(${scaleFactor})`;
+        miniMapBlueprint.style.transformOrigin = 'top left';
+        miniMapBlueprint.style.top            = '0px';
+        miniMapBlueprint.style.left           = '0px';
+
+        // Rail height: scaled content + top/bottom padding, capped at 50vh
+        const scaledPageH = pageHeight * scaleFactor;
+        const railHeight  = Math.min(scaledPageH + RAIL_PAD * 2, window.innerHeight * 0.5);
+        layoutRail.style.height = `${railHeight}px`;
+
+        // Indicator: 16:9 of the rail width (indicator is wider than rail via CSS left:-8px)
+        const indicatorH = Math.round(railWidth * 9 / 16);
+        viewportIndicator.style.height    = `${indicatorH}px`;
+        viewportIndicator.style.transform = `translateY(${RAIL_PAD}px)`;
     }
 
     function executeRailTracking(scrollPos) {
-        if (!structuralTarget || !layoutRail || !viewportIndicator) return;
-        const totalHeight = structuralTarget.scrollHeight;
-        const railHeight = layoutRail.clientHeight;
-        const ratio = railHeight / totalHeight;
-        const indicatorTop = Math.round(scrollPos * ratio);
-        viewportIndicator.style.transform = `translateY(${indicatorTop}px)`;
+        if (!structuralTarget || !layoutRail || !viewportIndicator || !miniMapBlueprint) return;
+
+        const pageHeight  = structuralTarget.scrollHeight;
+        const visibleH    = modalSheet ? modalSheet.clientHeight : window.innerHeight;
+        const viewportW   = modalSheet ? modalSheet.clientWidth  : window.innerWidth;
+        const railWidth   = layoutRail.clientWidth;
+        const railHeight  = layoutRail.clientHeight;
+        const innerW      = railWidth - RAIL_PAD * 2;
+        const scaleFactor = innerW / viewportW;
+
+        const maxScroll     = pageHeight - visibleH;
+        const scrollPercent = maxScroll > 0 ? scrollPos / maxScroll : 0;
+
+        // Indicator travels from RAIL_PAD to (railHeight - RAIL_PAD - indicatorH)
+        const indicatorH    = viewportIndicator.clientHeight || Math.round(railWidth * 9 / 16);
+        const maxY          = railHeight - RAIL_PAD - indicatorH;
+        const indicatorY    = RAIL_PAD + scrollPercent * (maxY - RAIL_PAD);
+        viewportIndicator.style.transform = `translateY(${indicatorY}px)`;
+
+        // Blueprint scrolls inside clip: from top:0 down to top:-(scaledH - clipH)
+        const scaledH = pageHeight * scaleFactor;
+        const clipH   = railHeight - RAIL_PAD * 2;
+        if (scaledH > clipH) {
+            miniMapBlueprint.style.top = `-${(scaledH - clipH) * scrollPercent}px`;
+        }
     }
 
     // -------------------------------------------------------
@@ -338,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalSheet.addEventListener('scroll', () => {
             const pos = modalSheet.scrollTop;
             const bottom = modalSheet.scrollHeight - modalSheet.clientHeight;
-            if (pos > 40 && pos < bottom - 40) {
+            if (pos > 40) {
                 overlayContainer.classList.add('expanded');
             } else {
                 overlayContainer.classList.remove('expanded');

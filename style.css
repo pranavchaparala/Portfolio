@@ -52,9 +52,9 @@
 
     --overlay-scrim: rgba(255, 255, 255, 0.487);
     --overlay-scrim-heavy: rgba(255, 255, 255, 0.517);
-    --overlay-rail: rgba(28, 28, 30, 0.02);
-    --overlay-rail-border: rgba(28, 28, 30, 0.06);
-    --overlay-rail-indicator: rgba(28, 28, 30, 0.03);
+    --overlay-rail: rgba(28, 28, 30, 0.03);
+    --overlay-rail-border: rgba(28, 28, 30, 0.1);
+    --overlay-rail-indicator: rgba(255, 255, 255, 0.5);
     --scrim-control-bg: rgba(255, 255, 255, 0.15);
     --scrim-control-bg-hover: rgba(255, 255, 255, 0.25);
 
@@ -115,9 +115,9 @@
 
     --overlay-scrim: rgba(0, 0, 0, 0.72);
     --overlay-scrim-heavy: rgba(0, 0, 0, 0.65);
-    --overlay-rail: rgba(245, 245, 247, 0.04);
-    --overlay-rail-border: rgba(245, 245, 247, 0.08);
-    --overlay-rail-indicator: rgba(245, 245, 247, 0.06);
+    --overlay-rail: rgba(245, 245, 247, 0.05);
+    --overlay-rail-border: rgba(245, 245, 247, 0.12);
+    --overlay-rail-indicator: rgba(0, 0, 0, 0.45);
 
     --footer-bg: rgba(44, 44, 46, 0.6);
     --popup-bg: var(--pill-bg);
@@ -411,6 +411,8 @@ nav {
         min-width: 20px;
         text-align: center;
         line-height: 1.3;
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 }
 
@@ -468,8 +470,7 @@ nav {
     color: inherit;
     cursor: pointer;
     width: 100%;
-    border: 1px solid var(--border-subtle);
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    transition: background-color 0.2s ease;
 }
 
 /* Caption below project card image - 2-line text description */
@@ -694,28 +695,98 @@ body.page-entered .tagline-block::after {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.project-card-container:hover .media-frame img,
-.project-card-container:hover .media-frame video {
-    transform: scale(0.98);
-    outline: var(--surface);
-    border-radius: 4px;
 }
 
 .project-card-container:hover .experiment-media {
-    transform: scale(0.99);
+    transform: none;
 }
 
 .project-card-container:hover .media-frame {
     background-color: var(--bg-card-hover);
-    border-color: var(--border-hover);
 }
 
 .project-card-container:hover {
     background-color: var(--bg-card-hover);
-    border-color: var(--border-hover);
+}
+
+/* Parallax reset — eases back to center on mouseleave */
+.media-frame img.tilt-img-resetting,
+.media-frame video.tilt-img-resetting {
+    transition: transform 0.4s ease;
+}
+
+/* Footer timezone tooltip */
+.footer-time-hover {
+    position: relative;
+    cursor: default;
+    user-select: none;
+}
+.footer-tz-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    background: var(--popup-bg);
+    border: 1px solid var(--popup-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 300;
+}
+.footer-tz-tooltip.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.tz-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+.tz-name {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+.tz-time {
+    font-size: 12px;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.tz-label {
+    color: var(--text-faint);
+    font-weight: 400;
+}
+
+/* About — Recognition item hover context */
+.recognition-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    cursor: default;
+}
+.recognition-context {
+    font-size: 11px;
+    color: var(--text-faint);
+    line-height: 1.3;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.2s ease, opacity 0.2s ease, margin-top 0.2s ease;
+    margin-top: 0;
+}
+.recognition-item:hover .recognition-context {
+    max-height: 24px;
+    opacity: 1;
+    margin-top: 2px;
 }
 
 #projects-section {
@@ -747,6 +818,10 @@ body.page-entered .tagline-block::after {
     opacity: 0.8;
 }
 
+.project-year {
+    transition: opacity 0.15s ease;
+}
+
 .experiment-media-wrap {
     width: 100%;
     overflow: hidden;
@@ -762,16 +837,8 @@ body.page-entered .tagline-block::after {
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.experiment-item.project-card-container:hover {
-    border-color: var(--border-hover);
-}
-
 .experiment-item.project-card-container:hover .experiment-media-wrap {
     background-color: var(--bg-card-hover);
-}
-
-.experiment-item.project-card-container {
-    border: 1px solid var(--border-subtle);
 }
 
 .experiment-item.project-card-container:hover .experiment-media {
@@ -1181,21 +1248,32 @@ header {
 .modal-right-progress-rail {
     position: fixed;
     top: 50%;
-    right: 20px;
+    right: 40px;
     transform: translateY(-50%);
-    width: 48px;
-    height: auto;
-    max-height: calc(100vh - 120px);
+    width: 60px;
+    height: 300px;
     background-color: var(--overlay-rail);
     border: 1px solid var(--overlay-rail-border);
     border-radius: 4px;
-    z-index: 1000;
+    z-index: 99999;
     pointer-events: none;
     opacity: 0;
+    overflow: visible;
+    transition: opacity 0.3s ease, height 0.25s ease;
+}
+
+/* Clip wrapper: clips blueprint to the padded area inside the rail */
+.modal-mini-map-clip {
+    position: absolute;
+    inset: 8px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: opacity 0.3s ease;
+    border-radius: 2px;
+}
+
+@media (max-width: 1024px) {
+    .modal-right-progress-rail {
+        display: none;
+    }
 }
 
 .modal-overlay.expanded .modal-right-progress-rail,
@@ -1203,26 +1281,40 @@ header {
     opacity: 1;
 }
 
+@media (max-width: 1024px) {
+    .modal-right-progress-rail {
+        display: none;
+    }
+}
+
+/* Back-to-top button at bottom of modal content */
+.modal-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 24px 32px;
+    flex-shrink: 0;
+}
+
+/* Indicator extends 8px outside the rail on each side; position/height set by JS */
 .modal-right-viewport-window {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    border: 1px solid var(--text-primary);
-    background-color: var(--overlay-rail-indicator);
+    left: -8px;
+    width: calc(100% + 16px);
+    border: 1.5px solid var(--text-primary);
+    border-radius: 3px;
     z-index: 2;
+    pointer-events: none;
     will-change: transform, height;
 }
 
+/* Matches standalone #mini-map-content */
 .modal-mini-map-blueprint {
     position: absolute;
-    right: 0;
     top: 0;
-    width: 100vw;
+    left: 0;
+    transform-origin: top left;
+    opacity: 0.25;
     pointer-events: none;
-    opacity: 0.12;
-    transform-origin: top right;
-    z-index: 1;
 }
 
 /* --- Modal Sheet Container --- */
@@ -1236,6 +1328,7 @@ header {
     border-radius: 12px;
     overflow-y: scroll;
     overflow-x: hidden;
+    overscroll-behavior: contain;
     transform: translateY(60px) translateZ(0);
     will-change: transform, width, max-width, height, margin-top, border-radius;
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1), max-width 0.5s cubic-bezier(0.16, 1, 0.3, 1), height 0.5s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1268,8 +1361,10 @@ header {
 /* --- Modal Inner Content --- */
 .modal-inner-content-frame {
     width: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
+    background-color: var(--pill-bg);
 }
 
 /* --- STICKY CONTROL SUB-NAV BAR --- */
@@ -1871,13 +1966,19 @@ body.page-leaving {
 
 /* Fixed-width cards; height set per card in JS for bar-graph look */
 .experiment-carousel-card {
-    flex: 0 0 240px;
+    flex: 0 0 270px;
     min-width: 0;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     gap: 6px;
     justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+    .experiment-carousel-card {
+        cursor: default;
+    }
 }
 
 .experiment-card-title {
@@ -1897,6 +1998,11 @@ body.page-leaving {
     overflow: hidden;
     background-color: var(--bg-media);
     flex-shrink: 0;
+    transition: box-shadow 0.2s ease;
+}
+
+[data-theme="dark"] .experiment-carousel-card:hover .experiment-media-wrap {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .home-experiments-thumbs .experiment-media {
