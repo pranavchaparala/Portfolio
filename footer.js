@@ -34,20 +34,31 @@
     }
 
     // ─── Card tilt ───────────────────────────────────────────────────────────
+    // Tilt is computed once per card (not per image) and applied to every
+    // image in that card's gallery together — on a 2/3-photo row this makes
+    // all the photos tilt as one surface instead of only the one the cursor
+    // happens to be directly over.
     const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window;
     const tiltInited = new WeakSet();
 
-    function initTiltOnImage(img) {
-        img.addEventListener('mouseenter', () => img.classList.remove('tilt-img-resetting'));
-        img.addEventListener('mousemove', e => {
-            const r  = img.getBoundingClientRect();
+    function initTiltOnCard(card) {
+        const getImages = () => card.querySelectorAll('.media-frame img, .media-frame video');
+
+        card.addEventListener('mouseenter', () => {
+            getImages().forEach(img => img.classList.remove('tilt-img-resetting'));
+        });
+        card.addEventListener('mousemove', e => {
+            const r  = card.getBoundingClientRect();
             const dx = ((e.clientX - r.left) / r.width  - 0.5) * 2;
             const dy = ((e.clientY - r.top)  / r.height - 0.5) * 2;
-            img.style.transform = `scale(1.06) translate(${dx * -6}px, ${dy * -6}px)`;
+            const transform = `scale(1.06) translate(${dx * -6}px, ${dy * -6}px)`;
+            getImages().forEach(img => { img.style.transform = transform; });
         });
-        img.addEventListener('mouseleave', () => {
-            img.classList.add('tilt-img-resetting');
-            img.style.transform = '';
+        card.addEventListener('mouseleave', () => {
+            getImages().forEach(img => {
+                img.classList.add('tilt-img-resetting');
+                img.style.transform = '';
+            });
         });
     }
 
@@ -77,12 +88,15 @@
     // Lazy-init on first hover — works regardless of when cards are rendered
     document.addEventListener('mouseover', e => {
         const el = e.target;
-        if (!isMobile && (el.tagName === 'IMG' || el.tagName === 'VIDEO') && el.closest('.media-frame') && !tiltInited.has(el)) {
-            tiltInited.add(el);
-            initTiltOnImage(el);
+        if (!isMobile) {
+            const card = el.closest('.project-card-container');
+            if (card && !tiltInited.has(card)) {
+                tiltInited.add(card);
+                initTiltOnCard(card);
+            }
         }
         const year = el.closest('.project-year');
-        if (year) initYearHover(year);
+        if (year && !isMobile) initYearHover(year);
     }, { passive: true });
 
     // ─── DOM-ready setup ─────────────────────────────────────────────────────
@@ -98,8 +112,10 @@
             tip.innerHTML = buildZoneHTML();
             setInterval(() => { tip.innerHTML = buildZoneHTML(); }, 1000);
             clockWrap.appendChild(tip);
-            clockWrap.addEventListener('mouseenter', () => tip.classList.add('visible'));
-            clockWrap.addEventListener('mouseleave', () => tip.classList.remove('visible'));
+            if (!isMobile) {
+                clockWrap.addEventListener('mouseenter', () => tip.classList.add('visible'));
+                clockWrap.addEventListener('mouseleave', () => tip.classList.remove('visible'));
+            }
         }
 
         // Nav count-up — synced to page-transition.js reveal

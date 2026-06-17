@@ -16,20 +16,6 @@ const projectsData = [
         "tags": ["Product Design"]
     },
     {
-        "id": "permanence-of-decay",
-        "title": "Permanence of Decay",
-        "year": "2026",
-        "caption": "Digital archive exploring material decay through computational photography.",
-        "galleryLayout": "2",
-        "galleryImages": [
-            { "src": "projects/permanence-of-decay/assets/IMG_0653-edited.jpg", "ratio": "ratio-cube" },
-            { "src": "projects/permanence-of-decay/assets/IMG_0652-edited-scaled.jpg", "ratio": "ratio-cube" }
-        ],
-        "link": "projects/permanence-of-decay/index.html",
-        "externalLink": "https://parsons.edu/dt-2026/permanence-of-decay/",
-        "tags": ["Creative Tech"]
-    },
-    {
         "id": "lectrix-ev",
         "title": "Lectrix EV",
         "year": "2024",
@@ -59,6 +45,20 @@ const projectsData = [
         "tags": ["Product Design"]
     },
     {
+        "id": "permanence-of-decay",
+        "title": "Permanence of Decay",
+        "year": "2026",
+        "caption": "Digital archive exploring material decay through computational photography.",
+        "galleryLayout": "2",
+        "galleryImages": [
+            { "src": "projects/permanence-of-decay/assets/IMG_0653-edited.jpg", "ratio": "ratio-cube" },
+            { "src": "projects/permanence-of-decay/assets/IMG_0652-edited-scaled.jpg", "ratio": "ratio-cube" }
+        ],
+        "link": "projects/permanence-of-decay/index.html",
+        "externalLink": "https://parsons.edu/dt-2026/permanence-of-decay/",
+        "tags": ["Creative Tech"]
+    },
+    {
         "id": "echoes-of-presence",
         "title": "Echoes of Presence",
         "year": "2023",
@@ -83,7 +83,13 @@ const projectsData = [
         ],
         "link": "projects/unreasonablecube/index.html",
         "externalLink": "https://devpost.com/software/team-18-unreasonable-cube/joins/i0cOIBWhoy-2Ny883ERCuA",
-        "tags": ["Creative Tech"]
+        "tags": ["Creative Tech"],
+        "hardwareParams": [
+            { "label": "Core", "value": "Custom mechanical assembly housing 6x ESP32 microcontrollers" },
+            { "label": "Displays", "value": "Six 4\" ST7796 TFT screens" },
+            { "label": "Mechanics", "value": "Gear-driven system with outer gear rings and internal rotary encoders, allowing rotation without stressing internal wiring" }
+        ],
+        "systemLogic": "OpenAI Whisper handles speech-to-text with tuned RMS thresholds; Claude 3.5 Sonnet generates the initial six lenses and the final speculative narrative; a Python-based weight engine coordinates and calculates interaction vectors influencing follow-up questions."
     },
     {
         "id": "oneplus",

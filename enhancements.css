@@ -1,0 +1,209 @@
+/*
+ * enhancements.css — additive layer: background noise, magnetic cursor, easter eggs,
+ * pixel-mosaic echoes in nav/footer hovers.
+ *
+ * Fully removable: delete the <link> tag that includes this file (and enhancements.js)
+ * from a page's <head>/<body> and everything below reverts to default behavior.
+ * To disable a single feature instead, flip its flag at the top of enhancements.js.
+ */
+
+/* ── 1. Subtle background noise ─────────────────────────────────────────── */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 999990;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 160px 160px;
+}
+
+/* ── 2. Magnetic pill cursor ─────────────────────────────────────────────── */
+body.enh-cursor-active,
+body.enh-cursor-active * {
+    cursor: none !important;
+}
+
+#enh-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    --enh-cursor-scale: 1;
+    background: var(--text-primary, #1F2124);
+    pointer-events: none;
+    z-index: 999997;
+    mix-blend-mode: difference;
+    opacity: 0.85;
+    overflow: hidden;
+    /* Position/scale are driven by mousemove (not a JS rAF loop) precisely so
+       this transition — handled by the compositor — can keep things smooth
+       even when the main thread stalls (e.g. the home page's mosaic canvas
+       work). width/height/border-radius only change on hover-enter/leave. */
+    transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1),
+        width 0.18s ease-out,
+        height 0.18s ease-out,
+        border-radius 0.18s ease-out,
+        background-color 0.2s ease,
+        opacity 0.2s ease;
+    will-change: transform;
+}
+
+/* Block mode (any hovered target): cursor grows from the small default dot */
+#enh-cursor.enh-cursor--block {
+    background: color-mix(in srgb, var(--text-primary, #1F2124) 14%, transparent);
+    mix-blend-mode: normal;
+    opacity: 1;
+}
+
+/* Card hover: cursor grows into a larger dot to signal interactivity */
+#enh-cursor.enh-cursor--card {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+}
+
+/* Buttons only: cursor envelops the exact button shape, with a springier
+   shape transition since it's a small element, not a full card. */
+#enh-cursor.enh-cursor--button {
+    transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1),
+        width 0.28s cubic-bezier(0.25, 1, 0.5, 1),
+        height 0.28s cubic-bezier(0.25, 1, 0.5, 1),
+        border-radius 0.28s cubic-bezier(0.25, 1, 0.5, 1),
+        background-color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+#enh-cursor-light {
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    left: -100%;
+    top: -100%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 55%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+#enh-cursor.enh-cursor--button #enh-cursor-light {
+    opacity: 1;
+}
+
+@media (pointer: coarse) {
+    #enh-cursor {
+        display: none;
+    }
+
+    body.enh-cursor-active,
+    body.enh-cursor-active * {
+        cursor: auto !important;
+    }
+}
+
+/* ── 3. Easter eggs ──────────────────────────────────────────────────────── */
+.enh-pixel-burst {
+    position: fixed;
+    inset: 0;
+    z-index: 999998;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    gap: 4px;
+    padding: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.enh-pixel-burst--active {
+    opacity: 1;
+}
+
+.enh-pixel-burst span {
+    background: var(--text-primary, #1F2124);
+    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.3);
+    animation: enh-pixel-pop 0.6s ease forwards;
+}
+
+@keyframes enh-pixel-pop {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+
+    40% {
+        opacity: 0.85;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+}
+
+html.enh-konami-flash {
+    animation: enh-rainbow-flash 0.9s ease;
+}
+
+@keyframes enh-rainbow-flash {
+
+    0%,
+    100% {
+        filter: none;
+    }
+
+    50% {
+        filter: invert(1) hue-rotate(180deg);
+    }
+}
+
+#enh-egg-info {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    max-width: 220px;
+    background: var(--bg-elevated, rgba(226, 235, 243, 0.75));
+    color: var(--text-primary, #1F2124);
+    border: 1px solid var(--border-default, #fff);
+    box-shadow: var(--shadow-lg, 0 0 0 1px rgba(31, 33, 36, 0.06));
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    z-index: 999999;
+    backdrop-filter: blur(6px);
+}
+
+#enh-egg-info span {
+    color: var(--text-muted, #70707A);
+}
+
+/* ── 4. Pixel-mosaic echoes — pill highlight on nav/footer hover ───────────── */
+html.enh-pixel-echoes .nav-btn,
+html.enh-pixel-echoes .footer-link {
+    position: relative;
+}
+
+html.enh-pixel-echoes .nav-btn::after,
+html.enh-pixel-echoes .footer-link::after {
+    content: "";
+    position: absolute;
+    inset: -4px -8px;
+    border-radius: 999px;
+    background: var(--bg-card-hover, var(--surface));
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: -1;
+    pointer-events: none;
+}
+
+html.enh-pixel-echoes .nav-btn:hover::after,
+html.enh-pixel-echoes .footer-link:hover::after {
+    opacity: 1;
+    transform: scale(1);
+}

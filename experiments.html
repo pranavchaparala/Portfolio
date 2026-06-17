@@ -12,11 +12,22 @@
     </script>
 
     <meta charset="UTF-8">
+    <meta name="theme-color" content="#F8F9FB" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Experiments — Pranav Chaparala</title>
     <meta name="description"
         content="Generative coding, motion design, and creative technology experiments by Pranav Chaparala.">
+    <link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
     <link rel="icon" type="image/png" href="assets/brand/favicon.png">
+    <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pranavchaparala.com/experiments.html">
+    <meta property="og:title" content="Experiments — Pranav Chaparala">
+    <meta property="og:description" content="Generative coding, motion design, and creative technology experiments by Pranav Chaparala.">
+    <meta property="og:image" content="https://pranavchaparala.com/assets/brand/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://pranavchaparala.com/assets/brand/og-image.png">
 
     <!-- Umami Analytics -->
     <script defer src="https://cloud.umami.is/script.js"
@@ -24,6 +35,9 @@
 
     <script src="theme.js"></script>
     <link rel="stylesheet" href="style.css">
+    <!-- enhancements: cursor + noise + easter eggs -- delete this block to disable -->
+    <link rel="stylesheet" href="enhancements.css">
+    <!-- /enhancements -->
 </head>
 
 <body class="page-entering">
@@ -133,6 +147,7 @@
     <script src="projects.js"></script>
     <script src="experiments.js"></script>
     <script src="footer.js"></script>
+
     <script>
         function initTaglineMarquee() {
             const el = document.querySelector('.tagline-block');
@@ -146,6 +161,9 @@
         window.addEventListener('load', initTaglineMarquee);
         window.addEventListener('resize', initTaglineMarquee);
     </script>
+    <!-- enhancements: cursor + noise + easter eggs -- delete this line to disable -->
+    <script src="enhancements.js"></script>
+    <!-- /enhancements -->
 </body>
 
 </html>

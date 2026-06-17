@@ -41,43 +41,10 @@
     let running = false;
     let rafId = null;
     let outLogW = 0, outLogH = 0, curTileW = 8, curTileH = 24;
-    let cameraStream = null;
-    let usingCamera = false;
 
-    // --- Camera toggle button — desktop only ---
-    if (!isMobile) {
-        const camBtn = document.createElement('button');
-        camBtn.className = 'nav-btn pm-cam-btn';
-        camBtn.setAttribute('aria-label', 'Toggle camera');
-        camBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>Try me</span>`;
-        wrap.appendChild(camBtn);
 
-        camBtn.addEventListener('click', async () => {
-            if (!usingCamera) {
-                try {
-                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                    vid.srcObject = cameraStream;
-                    await vid.play();
-                    usingCamera = true;
-                    camBtn.classList.add('active');
-                } catch (e) {
-                    console.warn('Camera access denied:', e);
-                }
-            } else {
-                if (cameraStream) {
-                    cameraStream.getTracks().forEach(t => t.stop());
-                    cameraStream = null;
-                }
-                vid.srcObject = null;
-                vid.src = 'hero.mp4';
-                vid.play().catch(() => {});
-                usingCamera = false;
-                camBtn.classList.remove('active');
-            }
-        });
-    }
-
-    vid.src = 'hero.mp4';
+    vid.poster = 'hero-poster.jpg';
+    vid.src = isMobile ? 'hero-mobile.mp4' : 'hero.mp4';
     vid.play().catch(() => {});
     vid.onloadedmetadata = () => {
         vid.onloadedmetadata = null;
@@ -90,7 +57,6 @@
         const cw = wrap.clientWidth;
         const ch = wrap.clientHeight;
         if (cw <= 0 || ch <= 0) return;
-        srcC.width = cw; srcC.height = ch;
         hirC.width = cw; hirC.height = ch;
         // Mobile: +10% columns (÷9 vs ÷10) and shorter pills (ASP 2 vs 3)
         const cols = Math.max(15, Math.round(cw / (isMobile ? 8 : 10)));
@@ -98,10 +64,28 @@
         curTileH = Math.round(curTileW * (isMobile ? 2 : ASP));
         outLogW = Math.floor(cw / curTileW) * curTileW;
         outLogH = Math.floor(ch / curTileH) * curTileH;
-        const dpr = window.devicePixelRatio || 1;
+        // Cap dpr: every fill/clear runs at outC's *physical* pixel count, so
+        // on a 2-3x retina display this was tripling canvas work for a
+        // tile-based effect that's already deliberately low-fidelity — the
+        // extra sharpness wasn't visible, only the cost was.
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
         outC.width = outLogW * dpr;
         outC.height = outLogH * dpr;
         outX.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        // The mono layer only ever needs roughly one sample per tile, so the
+        // source canvas is a small thumbnail instead of the full container —
+        // the browser's own image scaling does the averaging in drawCover,
+        // which is cheaper and less aliased than picking one source pixel
+        // per tile by hand. Crucially, the thumbnail's aspect ratio must
+        // match the container's (cw:ch), NOT the tile grid's (cols:rows) —
+        // tiles are tall pills (tileH = tileW * ASP), so cols:rows is
+        // skewed by a factor of ASP away from the real aspect ratio. Sizing
+        // the thumbnail to cols:rows previously cropped drawCover's "cover"
+        // scale against the wrong frame shape, which read as a stretch/zoom
+        // on both the video and the webcam feed.
+        srcC.width = Math.floor(outLogW / curTileW);
+        srcC.height = Math.max(1, Math.round(srcC.width * ch / cw));
     }
 
     // Responsive: reflow on container resize
@@ -144,12 +128,12 @@
         lensAlpha += ((isHovering ? 1 : 0) - lensAlpha) * 0.07;
         lensAlpha = Math.max(0, Math.min(1, lensAlpha));
 
+        // Mono layer: tiny thumbnail-sized read (one sample per tile) instead
+        // of a full-container getImageData — this used to be the single
+        // biggest per-frame cost.
         drawCover(srcX, vid, srcC.width, srcC.height);
-        drawCover(hirX, vid, hirC.width, hirC.height);
-
         const mosData = srcX.getImageData(0, 0, srcC.width, srcC.height).data;
-        const hirData = hirX.getImageData(0, 0, hirC.width, hirC.height).data;
-        const sw = srcC.width;
+        const sw = srcC.width, srcH = srcC.height;
 
         const ow = outLogW, oh = outLogH;
         const tileW = curTileW, tileH = curTileH;
@@ -163,31 +147,57 @@
         outX.clearRect(0, 0, ow, oh);
         const lensR = LENS * scx;
 
+        // Hi-res layer only matters inside the lens circle, and only while
+        // it's actually visible — skip the draw + readback entirely when not
+        // hovering, and crop the readback to the lens's bounding box (plus a
+        // one-tile margin) instead of the full container the rest of the time.
+        const showLens = lensAlpha > 0.01;
+        let hirData = null, hirCropX = 0, hirCropY = 0, hirCropW = 0, hirCropH = 0, hsx = 1, hsy = 1;
+        if (showLens) {
+            drawCover(hirX, vid, hirC.width, hirC.height);
+            hsx = hirC.width / ow;
+            hsy = hirC.height / oh;
+            const pad = Math.max(tileW, tileH);
+            const left = Math.max(0, Math.floor((cmx - lensR) * hsx) - pad);
+            const top = Math.max(0, Math.floor((cmy - lensR) * hsy) - pad);
+            const right = Math.min(hirC.width, Math.ceil((cmx + lensR) * hsx) + pad);
+            const bottom = Math.min(hirC.height, Math.ceil((cmy + lensR) * hsy) + pad);
+            hirCropX = left; hirCropY = top;
+            hirCropW = Math.max(1, right - left);
+            hirCropH = Math.max(1, bottom - top);
+            hirData = hirX.getImageData(hirCropX, hirCropY, hirCropW, hirCropH).data;
+        }
+
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < cols; c++) {
                 const cx = c * tileW + tileW / 2, cy = r * tileH + tileH / 2;
                 const dist = Math.sqrt((cx - cmx) ** 2 + (cy - cmy) ** 2);
 
-                const mpx = Math.floor(c * (srcC.width / cols)), mpy = Math.floor(r * (srcC.height / rows));
-                const midx = (mpy * sw + mpx) * 4;
+                const mpy = Math.min(srcH - 1, Math.floor(r * srcH / rows));
+                const midx = (mpy * sw + c) * 4;
                 const mr = mosData[midx], mg = mosData[midx + 1], mb = mosData[midx + 2];
                 const lum = 0.299 * mr + 0.587 * mg + 0.114 * mb;
                 const mono = Math.min(255, Math.round((lum / 255) * 210));
 
-                const hpx = Math.min(hirC.width - 1, Math.round(cx * (hirC.width / ow)));
-                const hpy = Math.min(hirC.height - 1, Math.round(cy * (hirC.height / oh)));
-                const hidx = (hpy * hirC.width + hpx) * 4;
-                const hr = hirData[hidx], hg = hirData[hidx + 1], hb = hirData[hidx + 2];
-
                 const t = Math.max(0, 1 - dist / lensR), ease = t * t * (3 - 2 * t), L = ease * lensAlpha;
+
+                let fr = mono, fg = mono, fb = mono;
+                if (hirData && L > 0.003) {
+                    const hpx = Math.min(hirC.width - 1, Math.round(cx * hsx)) - hirCropX;
+                    const hpy = Math.min(hirC.height - 1, Math.round(cy * hsy)) - hirCropY;
+                    if (hpx >= 0 && hpy >= 0 && hpx < hirCropW && hpy < hirCropH) {
+                        const hidx = (hpy * hirCropW + hpx) * 4;
+                        const hr = hirData[hidx], hg = hirData[hidx + 1], hb = hirData[hidx + 2];
+                        fr = Math.round(mono + (hr - mono) * L);
+                        fg = Math.round(mono + (hg - mono) * L);
+                        fb = Math.round(mono + (hb - mono) * L);
+                    }
+                }
+
                 const innerW = tileW - GAP * 2, innerH = tileH - GAP * 2, grow = L * innerW * 0.15;
                 const tw = Math.max(1, Math.min(tileW - 2, innerW + grow));
                 const th = Math.max(1, Math.min(tileH - 2, innerH + grow * ASP * 0.5));
                 const tx = c * tileW + GAP + (innerW - tw) / 2, ty = r * tileH + GAP + (innerH - th) / 2;
-
-                const fr = Math.round(mono + (hr - mono) * L);
-                const fg = Math.round(mono + (hg - mono) * L);
-                const fb = Math.round(mono + (hb - mono) * L);
 
                 outX.fillStyle = `rgb(${fr},${fg},${fb})`;
                 drawPill(tx, ty, tw, th);
@@ -200,9 +210,26 @@
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-        } else if (running && !rafId) {
+        } else if (running && !rafId && !document.querySelector('.modal-overlay.active')) {
             loop();
         }
+    });
+
+    // Pause entirely while a case-study/experiment modal is open — its own
+    // transitions (especially expanding to fullscreen, which animates
+    // width/height/margin-top/border-radius together) need the main thread,
+    // and this canvas's per-frame getImageData work was competing with it
+    // for no benefit since the mosaic isn't visible behind the modal anyway.
+    const modalPauseObserver = new MutationObserver(() => {
+        const modalOpen = !!document.querySelector('.modal-overlay.active');
+        if (modalOpen) {
+            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        } else if (running && !rafId && !document.hidden) {
+            loop();
+        }
+    });
+    document.querySelectorAll('.modal-overlay').forEach(el => {
+        modalPauseObserver.observe(el, { attributes: true, attributeFilter: ['class'] });
     });
 
     // Mouse/touch interactions — desktop only
@@ -212,4 +239,20 @@
         wrap.addEventListener('touchmove', e => { e.preventDefault(); mx = e.touches[0].clientX; my = e.touches[0].clientY; }, { passive: false });
         wrap.addEventListener('touchend', () => { mx = -9999; my = -9999; });
     }
+
+    // Public API for hero-mode.js
+    window.PM = {
+        get vid()    { return vid; },
+        get canvas() { return outC; },
+        get tileW()  { return curTileW; },
+        get tileH()  { return curTileH; },
+        get cols()   { return Math.floor(outLogW / curTileW); },
+        get rows()   { return Math.floor(outLogH / curTileH); },
+        get logW()   { return outLogW; },
+        get logH()   { return outLogH; },
+        get dpr()    { return Math.min(window.devicePixelRatio || 1, 1.5); },
+        get gap()    { return GAP; },
+        pause()  { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } },
+        resume() { if (running && !rafId && !document.hidden) loop(); },
+    };
 })();

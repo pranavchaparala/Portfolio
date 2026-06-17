@@ -19,8 +19,8 @@
     'use strict';
 
     // ── Minimum time (ms) the sweep bar is shown before content appears.
-    // Must be longer than the CSS sweep animation (0.52 s → 520 ms).
-    var MIN_MS  = 650;
+    // Must be longer than the CSS sweep animation (0.6 s → 600 ms).
+    var MIN_MS  = 750;
     var MAX_MS  = 3000;
 
     var startTime   = performance.now();

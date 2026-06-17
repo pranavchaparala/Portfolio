@@ -11,35 +11,53 @@
     </script>
 
     <meta charset="UTF-8">
+    <meta name="theme-color" content="#F8F9FB" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 — Pranav Chaparala</title>
     <meta name="description" content="Page not found.">
+    <link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
     <link rel="icon" type="image/png" href="assets/brand/favicon.png">
+    <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pranavchaparala.com/">
+    <meta property="og:title" content="Pranav Chaparala — Designer & Creative Technologist">
+    <meta property="og:description" content="Portfolio of Pranav Chaparala, Product Designer and Creative Technologist based in NYC.">
+    <meta property="og:image" content="https://pranavchaparala.com/assets/brand/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://pranavchaparala.com/assets/brand/og-image.png">
 
     <script defer src="https://cloud.umami.is/script.js"
         data-website-id="ac456770-c586-452f-afe2-117426e32d21"></script>
 
     <script src="theme.js"></script>
     <link rel="stylesheet" href="style.css">
+    <!-- enhancements: cursor + noise + easter eggs -- delete this block to disable -->
+    <link rel="stylesheet" href="enhancements.css">
+    <!-- /enhancements -->
 
     <style>
         .not-found-section {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 48px 24px 0;
+            justify-content: center;
+            padding: 24px 24px 48px;
             gap: 16px;
+            width: 100%;
         }
 
         @media (max-width: 768px) {
             .not-found-section {
-                padding-top: 110px;
+                padding-top: 24px;
             }
         }
 
         #pm-container {
             width: 100%;
-            max-width: 860px;
+            max-width: 1200px;
+            aspect-ratio: 2 / 1;
             border-radius: 16px;
             overflow: hidden;
         }
@@ -83,7 +101,7 @@
     <script src="commentary.js"></script>
     <script src="haptics.js"></script>
     <script src="page-transition.js"></script>
-    <script src="pixel-mosaic.js"></script>
+    <script src="404-gol.js"></script>
     <script>
         function initTaglineMarquee() {
             const el = document.querySelector('.tagline-block');
@@ -97,6 +115,9 @@
         window.addEventListener('load', initTaglineMarquee);
         window.addEventListener('resize', initTaglineMarquee);
     </script>
+    <!-- enhancements: cursor + noise + easter eggs -- delete this line to disable -->
+    <script src="enhancements.js"></script>
+    <!-- /enhancements -->
 </body>
 
 </html>

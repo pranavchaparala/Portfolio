@@ -59,8 +59,8 @@ Drop replacements here. File names must match exactly — all HTML files referen
 
 | File | Status |
 |------|--------|
-| `favicon.png` | ✓ Present |
-| `apple-touch-icon.png` | Missing |
-| `og-image.png` | Missing |
-| `favicon.svg` | Optional |
+| `favicon.png` | ✓ Present & wired |
+| `apple-touch-icon.png` | ✓ Present & wired |
+| `og-image.png` | ✓ Present & wired |
+| `favicon.svg` | ✓ Present & wired |
 | `favicon.ico` | Optional |

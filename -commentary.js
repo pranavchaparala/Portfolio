@@ -1,47 +1,22 @@
 (function () {
 
-    // ── What scrolls in the header on non-home pages ─────────────────────────
-    const BIO_TEXT = "Product designer with 4+ years building digital products at scale — from 0→1 launches to features used by 20M+ people. I design and build with code, focused right now on AI-driven products and experiences.";
+    // ── Edit this list — cycles through the tagline on all pages ─────────────
+    const CYCLING_ITEMS = [
+        "Currently listening to Post Malone: Tiny Desk Concert",
+        "building something new",
+        "This site is constantly evolving, expect frequent bugs and commits. Last updated: 15/Jun/2026",
+    ];
+    // ─────────────────────────────────────────────────────────────────────────
 
-    // ── Edit this to control what the tagline says on hover ──────────────────
+    // ── What the tagline says when hovering specific elements ─────────────────
     // Selectors that match inside .modal-overlay are automatically ignored.
     const COMMENTARY = [
 
         // ── Navigation ───────────────────────────────────────────────────────
-        {
-            selector: "a.nav-btn[href='projects.html'], a.nav-btn[href='../projects.html']",
-            text: "11 case studies — product strategy, interaction design, and systems thinking."
-        },
-        {
-            selector: "a.nav-btn[href='experiments.html'], a.nav-btn[href='../experiments.html']",
-            text: "19 experiments in motion, generative design, and creative code."
-        },
-        {
-            selector: "a.nav-btn[href='about.html'], a.nav-btn[href='../about.html']",
-            text: "A bit about who I am and how I work."
-        },
-        {
-            selector: ".header-block.logo-block",
-            text: "Back to the home page."
-        },
+
 
         // ── Home ─────────────────────────────────────────────────────────────
         {
-            selector: ".pill-dark",
-            text: "Download my resume — updated 2026."
-        },
-        {
-            selector: ".pill-light",
-            text: "Let's connect on LinkedIn."
-        },
-        {
-            selector: ".hero-years-highlight",
-            text: "Parsons, Digital Ocean, Noise, OnePlus — four years, four very different schools."
-        },
-        {
-            selector: ".hero-previously-card",
-            text: "Products shipped across EdTech, dev tools, consumer hardware, and mobile OS."
-        },
         {
             selector: "#hero-mosaic-container",
             text: "That's a live video mosaic. Hover around. Hit the camera button to use your webcam."
@@ -57,8 +32,6 @@
             text: "Click to open the full case study."
         },
         {
-            selector: ".projects-wrapper",
-            text: "All projects, sorted by most recent."
         },
 
         // ── Experiments ──────────────────────────────────────────────────────
@@ -101,26 +74,15 @@
     const taglineEl = document.querySelector('.tagline-text');
     if (!taglineEl) return;
 
-    const isHome = !!document.querySelector('.home-hero');
+    // ── Cycling logic ─────────────────────────────────────────────────────────
+    let cycleIndex = 0;
+    let cycleTimer = null;
 
-    if (isHome) {
-        taglineEl.textContent = 'hover on elements for insights';
-        taglineEl.classList.add('tagline-blink');
-    } else {
-        // Set bio text explicitly — avoids DOM contamination from tooltip img alt texts
-        taglineEl.textContent = BIO_TEXT;
-        // initTaglineMarquee in each page's inline script fires at window.load
-        // and correctly calculates --marquee-dist from the updated text
-    }
-
-    const defaultText = isHome ? 'hover on elements for insights' : BIO_TEXT;
-
-    let revertTimer = null;
-    let currentTarget = null;
-
-    function setTagline(text) {
-        clearTimeout(revertTimer);
-        taglineEl.classList.remove('tagline-blink');
+    function showItem(text, instant) {
+        if (instant) {
+            taglineEl.textContent = text;
+            return;
+        }
         taglineEl.style.transition = 'opacity 0.18s ease';
         taglineEl.style.opacity = '0';
         setTimeout(() => {
@@ -129,15 +91,38 @@
         }, 180);
     }
 
+    function advanceCycle() {
+        cycleIndex = (cycleIndex + 1) % CYCLING_ITEMS.length;
+        showItem(CYCLING_ITEMS[cycleIndex]);
+    }
+
+    function startCycling() {
+        clearInterval(cycleTimer);
+        cycleTimer = setInterval(advanceCycle, 4000);
+    }
+
+    function pauseCycling() {
+        clearInterval(cycleTimer);
+    }
+
+    // Show first item immediately, then start cycling
+    showItem(CYCLING_ITEMS[0], true);
+    startCycling();
+    // ─────────────────────────────────────────────────────────────────────────
+
+    let revertTimer = null;
+    let currentTarget = null;
+
+    function setTagline(text) {
+        pauseCycling();
+        clearTimeout(revertTimer);
+        showItem(text);
+    }
+
     function revertTagline() {
         revertTimer = setTimeout(() => {
-            taglineEl.style.transition = 'opacity 0.18s ease';
-            taglineEl.style.opacity = '0';
-            setTimeout(() => {
-                taglineEl.textContent = defaultText;
-                taglineEl.style.opacity = '1';
-                if (isHome) taglineEl.classList.add('tagline-blink');
-            }, 180);
+            showItem(CYCLING_ITEMS[cycleIndex]);
+            startCycling();
         }, 80);
     }
 

@@ -174,9 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        carousel.addEventListener('mouseenter', () => { isPaused = true; });
-        carousel.addEventListener('mouseleave', () => { isPaused = false; });
-
         startContinuousScroll();
 
         document.addEventListener('visibilitychange', () => {
