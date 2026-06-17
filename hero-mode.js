@@ -283,6 +283,9 @@
         container.addEventListener('touchstart', e => {
             tx0 = e.touches[0].clientX; ty0 = e.touches[0].clientY;
         }, { passive: true });
+        container.addEventListener('touchmove', e => {
+            if (currentMode === 'game') e.preventDefault();
+        }, { passive: false });
         container.addEventListener('touchend', e => {
             if (currentMode !== 'game') return;
             const dx = e.changedTouches[0].clientX - tx0;

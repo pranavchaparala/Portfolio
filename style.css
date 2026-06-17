@@ -501,6 +501,7 @@ nav {
     flex-direction: column;
     gap: 24px;
     width: 100%;
+    padding-bottom: 64px;
 }
 
 .project-single-grid {
@@ -1937,6 +1938,7 @@ body.page-leaving {
 /* Hero card from Figma */
 .hero-card {
     width: 100%;
+    position: relative;
 }
 
 .hero-card-header {
@@ -2037,7 +2039,7 @@ body.page-leaving {
     transition: opacity 0.3s ease;
 }
 
-.hero-card-image:has(.hero-mode-btn[data-mode="game"].active) .hero-game-hud {
+.hero-card:has(.hero-mode-btn[data-mode="game"].active) .hero-game-hud {
     opacity: 1;
 }
 
@@ -2513,9 +2515,15 @@ body.page-leaving {
         aspect-ratio: 16 / 9;
     }
 
+    .hero-mode-bar {
+        position: static;
+        margin-top: 8px;
+        align-self: flex-start;
+    }
+
     .hero-mode-btn[data-mode="game"],
     .hero-mode-btn[data-mode="camera"] {
-        display: none;
+        display: inline-flex;
     }
 
     .site-footer {
