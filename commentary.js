@@ -34,10 +34,10 @@
             selector: ".pill-light",
             text: "Let's connect on LinkedIn."
         },
-        {
-            selector: ".hero-years-highlight",
-            text: "Parsons, Digital Ocean, Noise, OnePlus — four years, four very different schools."
-        },
+        //{
+        //  selector: ".hero-years-highlight",
+        //text: "Parsons, Digital Ocean, Noise, OnePlus — four years, four very different schools."
+        //},
         {
             selector: ".hero-previously-card",
             text: "Products shipped across EdTech, dev tools, consumer hardware, and mobile OS."
