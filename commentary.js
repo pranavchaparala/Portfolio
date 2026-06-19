@@ -4,9 +4,9 @@
     if (window.matchMedia('(hover: none)').matches) return;
 
     const CYCLING_ITEMS = [
-        "Currently listening to Post Malone: Tiny Desk Concert",
-        "building something new",
-        "This site is constantly evolving, expect frequent bugs and commits. Last updated: 15/Jun/2026",
+        "Currently focused right now on AI-driven products and experiences",
+        "I design and build with code, prototyping AI experiences that feel intuitive not unpredictable",
+        "This site is constantly evolving with new projects and refinements",
     ];
 
     const COMMENTARY = [
@@ -42,10 +42,10 @@
             selector: ".hero-previously-card",
             text: "Products shipped across EdTech, dev tools, consumer hardware, and mobile OS."
         },
-        {
-            selector: "#hero-mosaic-container",
-            text: "That's a live video mosaic. Hover around. Hit the camera button to use your webcam."
-        },
+        //{
+        //   selector: "#hero-mosaic-container",
+        //  text: "That's a live video mosaic. Hover around. Hit the camera button to use your webcam."
+        //},
         {
             selector: ".pm-cam-btn",
             text: "Switch to your webcam — the mosaic renders you in real time."

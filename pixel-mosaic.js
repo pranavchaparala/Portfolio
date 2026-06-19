@@ -44,8 +44,16 @@
 
 
     vid.poster = 'hero-poster.jpg';
+    vid.preload = 'auto';
+    vid.autoplay = true;
     vid.src = isMobile ? 'hero-mobile.mp4' : 'hero.mp4';
     vid.play().catch(() => {});
+    if (isMobile) {
+        document.addEventListener('touchstart', function retry() {
+            vid.play().catch(() => {});
+            document.removeEventListener('touchstart', retry);
+        }, { passive: true });
+    }
     vid.onloadedmetadata = () => {
         vid.onloadedmetadata = null;
         setup();
@@ -114,16 +122,22 @@
         outX.fill();
     }
 
-    function drawCover(ctx, video, dw, dh) {
-        const vw = video.videoWidth, vh = video.videoHeight;
+    function drawCover(ctx, src, dw, dh) {
+        const vw = src.videoWidth || src.naturalWidth;
+        const vh = src.videoHeight || src.naturalHeight;
         if (!vw || !vh) return;
         const scale = Math.max(dw / vw, dh / vh);
         const sw = vw * scale, sh = vh * scale;
-        ctx.drawImage(video, (dw - sw) / 2, (dh - sh) / 2, sw, sh);
+        ctx.drawImage(src, (dw - sw) / 2, (dh - sh) / 2, sw, sh);
     }
 
+    const posterImg = new Image();
+    posterImg.src = 'hero-poster.jpg';
+
     function draw() {
-        if (!running || vid.readyState < 2) return;
+        if (!running) return;
+        const src = vid.readyState >= 2 ? vid : (posterImg.complete && posterImg.naturalWidth ? posterImg : null);
+        if (!src) return;
         const isHovering = !isMobile && mx > -100;
         lensAlpha += ((isHovering ? 1 : 0) - lensAlpha) * 0.07;
         lensAlpha = Math.max(0, Math.min(1, lensAlpha));
@@ -131,7 +145,7 @@
         // Mono layer: tiny thumbnail-sized read (one sample per tile) instead
         // of a full-container getImageData — this used to be the single
         // biggest per-frame cost.
-        drawCover(srcX, vid, srcC.width, srcC.height);
+        drawCover(srcX, src, srcC.width, srcC.height);
         const mosData = srcX.getImageData(0, 0, srcC.width, srcC.height).data;
         const sw = srcC.width, srcH = srcC.height;
 
@@ -154,7 +168,7 @@
         const showLens = lensAlpha > 0.01;
         let hirData = null, hirCropX = 0, hirCropY = 0, hirCropW = 0, hirCropH = 0, hsx = 1, hsy = 1;
         if (showLens) {
-            drawCover(hirX, vid, hirC.width, hirC.height);
+            drawCover(hirX, src, hirC.width, hirC.height);
             hsx = hirC.width / ow;
             hsy = hirC.height / oh;
             const pad = Math.max(tileW, tileH);
