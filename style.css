@@ -882,6 +882,7 @@ body.page-entered .tagline-block::after {
 }
 
 .experiment-media-wrap {
+    position: relative;
     width: 100%;
     overflow: hidden;
     border-radius: 4px;

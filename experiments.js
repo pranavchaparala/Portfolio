@@ -75,9 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
             img.src = MEDIA_BASE + exp.filename;
             img.alt = exp.title;
             img.className = 'experiment-media';
-            // Recalculate span once the image loads (height wasn't known before)
             img.addEventListener('load', () => setSpan(card));
             mediaWrap.appendChild(img);
+
             card.appendChild(mediaWrap);
 
             if (exp.description) {

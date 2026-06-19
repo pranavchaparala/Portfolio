@@ -89,28 +89,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 exp.videoFilename.endsWith('.webm')
             );
 
-            if (isGif) {
-                const img = document.createElement('img');
-                img.src = MEDIA_BASE + exp.videoFilename;
-                img.alt = exp.title;
-                img.className = 'experiment-media';
-                mediaWrap.appendChild(img);
-            } else if (isVideo) {
-                const video = document.createElement('video');
-                video.src = MEDIA_BASE + exp.videoFilename;
-                video.autoplay = true;
-                video.loop = true;
-                video.muted = true;
-                video.setAttribute('muted', '');
-                video.playsInline = true;
-                video.className = 'experiment-media';
-                mediaWrap.appendChild(video);
-            } else {
-                const img = document.createElement('img');
-                img.src = MEDIA_BASE + exp.filename;
-                img.alt = exp.title;
-                img.className = 'experiment-media';
-                mediaWrap.appendChild(img);
+            const img = document.createElement('img');
+            img.src = MEDIA_BASE + exp.filename;
+            img.alt = exp.title;
+            img.className = 'experiment-media';
+            mediaWrap.appendChild(img);
+
+            if (isVideo) {
+                let video = null;
+                mediaWrap.addEventListener('mouseenter', () => {
+                    if (!video) {
+                        video = document.createElement('video');
+                        video.src = MEDIA_BASE + exp.videoFilename;
+                        video.loop = true;
+                        video.muted = true;
+                        video.playsInline = true;
+                        video.className = 'experiment-media';
+                        mediaWrap.appendChild(video);
+                    }
+                    img.style.opacity = '0';
+                    img.style.position = 'absolute';
+                    video.style.display = '';
+                    video.play().catch(() => {});
+                });
+                mediaWrap.addEventListener('mouseleave', () => {
+                    if (video) { video.pause(); video.style.display = 'none'; }
+                    img.style.opacity = '';
+                    img.style.position = '';
+                });
             }
 
             card.appendChild(mediaWrap);
