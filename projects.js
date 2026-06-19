@@ -61,7 +61,7 @@ const projectsData = [
     {
         "id": "echoes-of-presence",
         "title": "Echoes of Presence",
-        "year": "2023",
+        "year": "2024",
         "caption": "Interactive installation exploring presence through sound and light.",
         "galleryLayout": "2",
         "galleryImages": [
@@ -107,7 +107,7 @@ const projectsData = [
     {
         "id": "viewbuds",
         "title": "Viewbuds",
-        "year": "2025",
+        "year": "2024",
         "caption": "True wireless earbuds app with seamless connectivity experience.",
         "galleryLayout": "1",
         "galleryImages": [
@@ -120,7 +120,7 @@ const projectsData = [
     {
         "id": "bezapp",
         "title": "Bezapp",
-        "year": "",
+        "year": "2021",
         "caption": "Event management app design for seamless social planning.",
         "galleryLayout": "1",
         "galleryImages": [
@@ -146,7 +146,7 @@ const projectsData = [
     {
         "id": "gudz",
         "title": "Gudz",
-        "year": "",
+        "year": "2021",
         "caption": "Logistics CMS and delivery platform UX/UI redesign.",
         "galleryLayout": "1",
         "galleryImages": [
@@ -158,24 +158,26 @@ const projectsData = [
     }
 ];
 
+// To reorder the grid, change the `order` number. Lower = appears first.
 const experimentsData = [
-    { id: 1, filename: "playground1.png", videoFilename: "playground1.mp4", title: "GENUARY WITHOUT A FONT", description: "Generative Cityscape in P5JS" },
-    { id: 2, filename: "playground2.png", videoFilename: "playground2.mp4", title: "BOOLEAN ALGEBRA", description: "Algorithmic Geometry Study" },
-    { id: 3, filename: "playground3.png", videoFilename: "playground3.mp4", title: "ASCII VIDEO ENCODING", description: "Python Video Encoding" },
-    { id: 4, filename: "playground4.png", videoFilename: "playground4.mp4", title: "FIBONACCI SEQUENCE", description: "Audio Reactive Golden Spiral in P5JS" },
-    { id: 5, filename: "playground5.png", videoFilename: "playground5.mp4", title: "METROPOLIS", description: "Generative Cityscape in P5JS" },
-    { id: 6, filename: "playground6.png", videoFilename: "playground6.mp4", title: "LOWRES", description: "Audio Reactive Low Resolution in P5JS" },
-    { id: 7, filename: "playground7.png", videoFilename: "playground7.png", title: "NOTHING POINT", description: "Fluid Simulation Concept" },
-    { id: 8, filename: "playground8.png", videoFilename: "playground8.png", title: "FLUX", description: "Noise Field Visualization" },
-    { id: 9, filename: "playground9.png", videoFilename: "playground9.png", title: "ECHO", description: "Recursive Pattern Echo" },
-    { id: 10, filename: "playground10.png", videoFilename: "playground10.mp4", title: "Mamun Investment Onboarding", description: "Motion Design and Animation" },
-    { id: 11, filename: "playground11.png", videoFilename: "playground11.mp4", title: "SĀR Rise Collection", description: "Furniture Design - Seating" },
-    { id: 12, filename: "playground12.png", videoFilename: "playground12.mp4", title: "Inkā Logo", description: "Brand Design for Fitness Diagnosis Platform" },
-    { id: 13, filename: "playground13.png", videoFilename: "playground13.mp4", title: "Cheriyal Collection", description: "Product Design for Cheriyal Handicrafts" },
-    { id: 14, filename: "playground14.png", videoFilename: "playground14.mp4", title: "Vaccine", description: "Illustration for Covid-19 Awareness" },
-    { id: 15, filename: "playground15.png", videoFilename: "playground15.mp4", title: "Straight Outta Olympus", description: "Brand and Graphic Design for College Fest" },
-    { id: 16, filename: "playground16.png", videoFilename: "playground16.mp4", title: "Clear Cocktail", description: "Packaging Design for a Beverage Brand" },
-    { id: 17, filename: "playground17.png", videoFilename: "playground17.mp4", title: "Logo Exploration", description: "Logo's for covid variants in various design styles" },
-    { id: 18, filename: "playground18.png", videoFilename: "playground18.mp4", title: "Bling Smart Accessories", description: "Product Design for Smart Wearable Concept" },
-    { id: 19, filename: "playground19.png", videoFilename: "playground19.mp4", title: "Piece Together", description: "Mixed Reality Puzzle Game for Apple Vision Pro" }
+    { order: 1, id: 20, filename: "playground20.png", videoFilename: "playground20.mp4", title: "LOOM", description: "The AI-powered tool that instantly swaps everyday objects with perfectly lit movie props.", category: "AI / Product", tools: "HTML, Python, Nanobanana API" },
+    { order: 5, id: 1, filename: "playground1.png", videoFilename: "playground1.mp4", title: "GENUARY WITHOUT A FONT", description: "Generative Cityscape in P5JS", category: "Creative Coding", tools: "Javascript" },
+    { order: 2, id: 2, filename: "playground2.png", videoFilename: "playground2.mp4", title: "BOOLEAN ALGEBRA", description: "Algorithmic Geometry Study", category: "Creative Coding", tools: "Javascript" },
+    { order: 9, id: 3, filename: "playground3.png", videoFilename: "playground3.mp4", title: "ASCII VIDEO ENCODING", description: "Python Video Encoding", category: "Creative Coding", tools: "Python" },
+    { order: 6, id: 4, filename: "playground4.png", videoFilename: "playground4.mp4", title: "FIBONACCI SEQUENCE", description: "Audio Reactive Golden Spiral in P5JS", category: "Creative Coding", tools: "Javascript" },
+    { order: 4, id: 5, filename: "playground5.png", videoFilename: "playground5.mp4", title: "METROPOLIS", description: "Generative Cityscape in P5JS", category: "Creative Coding", tools: "Javascript" },
+    { order: 10, id: 6, filename: "playground6.png", videoFilename: "playground6.mp4", title: "LOWRES", description: "Audio Reactive Low Resolution in P5JS", category: "Creative Coding", tools: "Javascript" },
+    { order: 18, id: 7, filename: "playground7.png", videoFilename: "playground7.png", title: "NOTHING POINT", description: "Fluid Simulation Concept", category: "Creative Coding", tools: "Javascript" },
+    { order: 12, id: 8, filename: "playground8.png", videoFilename: "playground8.png", title: "FLUX", description: "Noise Field Visualization", category: "Creative Coding", tools: "Javascript" },
+    { order: 20, id: 9, filename: "playground9.png", videoFilename: "playground9.png", title: "ECHO", description: "Recursive Pattern Echo", category: "Creative Coding", tools: "Javascript" },
+    { order: 11, id: 10, filename: "playground10.png", videoFilename: "playground10.mp4", title: "Mamun Investment Onboarding", description: "Motion Design and Animation" },
+    { order: 8, id: 11, filename: "playground11.png", videoFilename: "playground11.mp4", title: "SĀR Rise Collection", description: "Furniture Design - Seating" },
+    { order: 14, id: 12, filename: "playground12.png", videoFilename: "playground12.mp4", title: "Inkā Logo", description: "Brand Design for Fitness Diagnosis Platform" },
+    { order: 7, id: 13, filename: "playground13.png", videoFilename: "playground13.mp4", title: "Cheriyal Collection", description: "Product Design for Cheriyal Handicrafts" },
+    { order: 15, id: 14, filename: "playground14.png", videoFilename: "playground14.mp4", title: "Vaccine", description: "Illustration for Covid-19 Awareness" },
+    { order: 13, id: 15, filename: "playground15.png", videoFilename: "playground15.mp4", title: "Straight Outta Olympus", description: "Brand and Graphic Design for College Fest" },
+    { order: 17, id: 16, filename: "playground16.png", videoFilename: "playground16.mp4", title: "Clear Cocktail", description: "Packaging Design for a Beverage Brand" },
+    { order: 16, id: 17, filename: "playground17.png", videoFilename: "playground17.mp4", title: "Logo Exploration", description: "Logo's for covid variants in various design styles" },
+    { order: 19, id: 18, filename: "playground18.png", videoFilename: "playground18.mp4", title: "Bling Smart Accessories", description: "Product Design for Smart Wearable Concept" },
+    { order: 3, id: 19, filename: "playground19.png", videoFilename: "playground19.mp4", title: "Piece Together", description: "Mixed Reality Puzzle Game for Apple Vision Pro", tools: "Unity" }
 ];

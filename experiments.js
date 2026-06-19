@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const MEDIA_BASE = 'assets/experiments/';
 
     // -------------------------------------------------------
-    // RENDER 5-COL MASONRY with project-card-container style
+    // RENDER MASONRY with left-to-right visual order
     // -------------------------------------------------------
     function renderExperiments() {
         if (!experimentsSection || typeof experimentsData === 'undefined') return;
@@ -43,63 +43,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const masonry = document.createElement('div');
         masonry.className = 'experiments-masonry';
 
-        experimentsData.forEach(exp => {
+        const sorted = [...experimentsData].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+
+        const GAP = 16;
+
+        function setSpan(card) {
+            card.style.gridRowEnd = '';
+            const h = card.getBoundingClientRect().height;
+            if (h > 0) card.style.gridRowEnd = `span ${Math.ceil(h) + GAP}`;
+        }
+
+        sorted.forEach(exp => {
             const card = document.createElement('div');
             card.className = 'experiment-item project-card-container';
 
-            // ---- Header (title on top, same as project cards) ----
             const header = document.createElement('div');
             header.className = 'project-header';
-
             const nameSpan = document.createElement('span');
             nameSpan.className = 'project-name';
             nameSpan.textContent = exp.title;
-
             const descSpan = document.createElement('span');
             descSpan.className = 'project-year';
             descSpan.textContent = exp.tag || '';
-
             header.appendChild(nameSpan);
             header.appendChild(descSpan);
             card.appendChild(header);
 
-            // ---- Media at natural aspect ratio ----
             const mediaWrap = document.createElement('div');
             mediaWrap.className = 'experiment-media-wrap';
-
-            const isGif = exp.videoFilename && exp.videoFilename.endsWith('.gif');
-            const isVideo = exp.videoFilename && (
-                exp.videoFilename.endsWith('.mp4') ||
-                exp.videoFilename.endsWith('.mov') ||
-                exp.videoFilename.endsWith('.webm')
-            );
-
-            if (isGif) {
-                const img = document.createElement('img');
-                img.src = MEDIA_BASE + exp.videoFilename;
-                img.alt = exp.title;
-                img.className = 'experiment-media';
-                mediaWrap.appendChild(img);
-            } else if (isVideo) {
-                const video = document.createElement('video');
-                video.src = MEDIA_BASE + exp.videoFilename;
-                video.autoplay = true;
-                video.loop = true;
-                video.muted = true;
-                video.playsInline = true;
-                video.className = 'experiment-media';
-                mediaWrap.appendChild(video);
-            } else {
-                const img = document.createElement('img');
-                img.src = MEDIA_BASE + exp.filename;
-                img.alt = exp.title;
-                img.className = 'experiment-media';
-                mediaWrap.appendChild(img);
-            }
-
+            const img = document.createElement('img');
+            img.src = MEDIA_BASE + exp.filename;
+            img.alt = exp.title;
+            img.className = 'experiment-media';
+            // Recalculate span once the image loads (height wasn't known before)
+            img.addEventListener('load', () => setSpan(card));
+            mediaWrap.appendChild(img);
             card.appendChild(mediaWrap);
 
-            // Caption below image
             if (exp.description) {
                 const caption = document.createElement('div');
                 caption.className = 'project-card-caption';
@@ -107,9 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.appendChild(caption);
             }
 
-            // Click → open modal
             card.addEventListener('click', () => openExperimentModal(exp));
             masonry.appendChild(card);
+
+            // ResizeObserver handles window resize + any late reflow
+            new ResizeObserver(() => setSpan(card)).observe(card);
         });
 
         experimentsSection.appendChild(masonry);
@@ -175,6 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
             video.playsInline = true;
             mediaContainer.appendChild(video);
             modalVideo = video;
+            // Must call play() synchronously here — inside the click handler's
+            // call stack — so the browser treats it as a user-gesture-triggered
+            // play and allows audio. A setTimeout would break that context.
+            video.play().catch(() => {});
         } else {
             const img = document.createElement('img');
             img.src = MEDIA_BASE + exp.filename;
@@ -207,14 +193,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Col 1 — About / Description
         board.appendChild(makeStack('About', exp.description));
 
-        // Col 2 — Medium (inferred from file type)
-        let medium = 'Static Image';
-        if (isGif) medium = 'GIF Animation';
-        if (isVideo) medium = 'Motion / Video';
+        if (exp.category) {
+            board.appendChild(makeStack('Category', exp.category));
+        }
+
+        const medium = exp.medium || (isGif ? 'GIF Animation' : isVideo ? 'Motion / Video' : 'Static Image');
         board.appendChild(makeStack('Medium', medium));
 
-        // Col 3 — Index
-        board.appendChild(makeStack('No.', String(exp.id).padStart(2, '0')));
+        if (exp.tools) {
+            board.appendChild(makeStack('Tools', exp.tools));
+        }
 
         metaRow.appendChild(board);
 
@@ -226,8 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (typeof umami !== 'undefined') umami.track('experiment-view', { experiment: exp.title, id: exp.id });
 
-        // Play video with audio — user gesture from clicking the card grants permission
-        if (modalVideo) setTimeout(() => modalVideo.play().catch(() => {}), 80);
 
         setTimeout(() => syncRailLayout(), 80);
     };

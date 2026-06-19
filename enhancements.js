@@ -62,12 +62,20 @@
         const OTHER_SELECTOR = 'a, [role="button"], [onclick], label[for], summary';
         const EXCLUDE_SELECTOR = '.project-card-container, .experiment-item, .experiment-carousel-card';
 
+        // Outer wrap: handles position + will-change only (no visual styling).
+        // Inner cursor: handles mix-blend-mode + visuals.
+        // Keeping them on separate elements avoids the Safari compositor bug
+        // where will-change:transform and mix-blend-mode on the same fixed
+        // element cause flickering and blend artifacts.
+        const cursorWrap = document.createElement('div');
+        cursorWrap.id = 'enh-cursor-wrap';
         const cursor = document.createElement('div');
         cursor.id = 'enh-cursor';
         const light = document.createElement('span');
         light.id = 'enh-cursor-light';
         cursor.appendChild(light);
-        document.body.appendChild(cursor);
+        cursorWrap.appendChild(cursor);
+        document.body.appendChild(cursorWrap);
 
         const MAGNETIC_STRENGTH = 0.045;       // buttons: how much of the offset gets applied (0-1)
         const MAGNETIC_LIMIT = 0.032;          // buttons: clamp, as a fraction of the target's own *smaller* dimension
@@ -100,14 +108,16 @@
             }
         }
 
-        function releaseActive() {
+        function releaseActive(hasNextTarget) {
             if (!active) return;
             active.el.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
             active.el.style.transform = '';
             active = null;
             cursor.classList.remove('enh-cursor--block', 'enh-cursor--button');
             light.style.transform = '';
-            setShape(null);
+            // Skip the default-size reset when moving directly to another target —
+            // avoids the visible 14px shrink flash between two interactive elements.
+            if (!hasNextTarget) setShape(null);
         }
 
         function applyScale() {
@@ -118,11 +128,12 @@
         function handleMove(mouseX, mouseY) {
             let hit = document.elementFromPoint(mouseX, mouseY);
             // elementFromPoint can return the cursor div itself (high z-index);
-            // hide it temporarily so the real element underneath is returned.
-            if (hit === cursor || hit === light) {
-                cursor.style.display = 'none';
+            // use visibility:hidden instead of display:none so the compositor
+            // layer and active CSS transitions are not disturbed.
+            if (hit === cursor || hit === light || hit === cursorWrap) {
+                cursorWrap.style.visibility = 'hidden';
                 hit = document.elementFromPoint(mouseX, mouseY);
-                cursor.style.display = '';
+                cursorWrap.style.visibility = '';
             }
             // Only skip the scrolling content body of the modal — that's where
             // heavy DOM injection + multi-property transitions happen and cause
@@ -147,7 +158,7 @@
             }
 
             if (target !== (active && active.el)) {
-                releaseActive();
+                releaseActive(!!target);
                 if (target) {
                     const isButton = !!buttonTarget;
                     const rect = target.getBoundingClientRect();
@@ -195,13 +206,12 @@
                 // trying to be a glove for the whole card.
             }
 
-            cursor.style.transform =
-                `translate(${tx}px, ${ty}px) translate(-50%, -50%) scale(var(--enh-cursor-scale, 1))`;
+            cursorWrap.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
         }
 
         window.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
-        window.addEventListener('mouseleave', () => { releaseActive(); cursor.style.opacity = '0'; });
-        window.addEventListener('mouseenter', () => { cursor.style.opacity = ''; });
+        window.addEventListener('mouseleave', () => { releaseActive(); cursorWrap.style.opacity = '0'; });
+        window.addEventListener('mouseenter', () => { cursorWrap.style.opacity = ''; });
         window.addEventListener('mousedown', () => { isDown = true; applyScale(); });
         window.addEventListener('mouseup', () => { isDown = false; applyScale(); });
     }

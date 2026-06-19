@@ -26,28 +26,33 @@ body.enh-cursor-active * {
     cursor: none !important;
 }
 
-#enh-cursor {
+/* Outer: position + GPU compositing only — no visual styling or blend mode.
+   Separating will-change:transform from mix-blend-mode fixes the Safari
+   compositor bug where both on the same fixed element cause flicker. */
+#enh-cursor-wrap {
     position: fixed;
     top: 0;
     left: 0;
-    --enh-cursor-scale: 1;
-    background: var(--text-primary, #1F2124);
     pointer-events: none;
     z-index: 999997;
+    will-change: transform;
+    transition: opacity 0.2s ease;
+}
+
+/* Inner: all visuals, blend mode, sizing. No will-change or transform here. */
+#enh-cursor {
+    --enh-cursor-scale: 1;
+    background: var(--text-primary, #1F2124);
     mix-blend-mode: difference;
     opacity: 0.85;
     overflow: hidden;
-    /* Position/scale are driven by mousemove (not a JS rAF loop) precisely so
-       this transition — handled by the compositor — can keep things smooth
-       even when the main thread stalls (e.g. the home page's mosaic canvas
-       work). width/height/border-radius only change on hover-enter/leave. */
+    transform: translate(-50%, -50%) scale(var(--enh-cursor-scale, 1));
     transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1),
         width 0.18s ease-out,
         height 0.18s ease-out,
         border-radius 0.18s ease-out,
         background-color 0.2s ease,
         opacity 0.2s ease;
-    will-change: transform;
 }
 
 /* Block mode (any hovered target): cursor grows from the small default dot */
@@ -92,7 +97,7 @@ body.enh-cursor-active * {
 }
 
 @media (pointer: coarse) {
-    #enh-cursor {
+    #enh-cursor-wrap {
         display: none;
     }
 
