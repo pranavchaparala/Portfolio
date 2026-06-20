@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = document.createElement('img');
             img.src = MEDIA_BASE + exp.filename;
             img.alt = exp.title;
+            img.loading = 'lazy';
             img.className = 'experiment-media';
             img.addEventListener('load', () => setSpan(card));
             mediaWrap.appendChild(img);
