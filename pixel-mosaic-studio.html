@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Mosaic Studio</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0a0a0a;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  height: 100dvh;
+  display: flex;
+  overflow: hidden;
+}
+
+.panel {
+  width: 236px;
+  flex-shrink: 0;
+  background: #111;
+  border-right: 1px solid #1c1c1c;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.panel::-webkit-scrollbar { width: 3px; }
+.panel::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+
+.panel-header {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid #1c1c1c;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-header h1 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.sec {
+  padding: 14px 16px;
+  border-bottom: 1px solid #181818;
+}
+.sec-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #3a3a3a;
+  margin-bottom: 10px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 3px;
+  background: #0d0d0d;
+  padding: 3px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+.tab {
+  flex: 1;
+  padding: 5px 4px;
+  background: transparent;
+  border: none;
+  color: #4a4a4a;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.tab:hover { color: #888; }
+.tab.active { background: #1e1e1e; color: #ccc; }
+
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* Drop zone */
+.dz {
+  border: 1px dashed #252525;
+  border-radius: 6px;
+  padding: 18px 12px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 11px;
+  color: #3a3a3a;
+  user-select: none;
+  line-height: 1.6;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.dz:hover, .dz.over { border-color: #3a3a3a; color: #777; background: #141414; }
+.dz .dz-ico { font-size: 18px; display: block; margin-bottom: 5px; }
+.file-in { display: none; }
+
+/* Status */
+.src-status {
+  font-size: 10px;
+  color: #333;
+  margin-top: 7px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.src-status.on { color: #555; }
+
+/* Secondary button */
+.sec-btn {
+  width: 100%;
+  margin-top: 7px;
+  padding: 7px;
+  background: transparent;
+  border: 1px dashed #1e1e1e;
+  color: #3a3a3a;
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sec-btn:hover { color: #777; border-color: #333; }
+
+/* Text input */
+.txt-area {
+  width: 100%;
+  background: #0d0d0d;
+  border: 1px solid #1e1e1e;
+  color: #ccc;
+  font-size: 12px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 68px;
+  font-family: inherit;
+  outline: none;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+.txt-area:focus { border-color: #2e2e2e; }
+.txt-area::placeholder { color: #2e2e2e; }
+
+.txt-opts {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+  align-items: center;
+}
+.clr-pick {
+  width: 26px;
+  height: 26px;
+  border: 1px solid #252525;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  flex-shrink: 0;
+}
+.clr-lbl {
+  font-size: 9px;
+  color: #2e2e2e;
+  white-space: nowrap;
+}
+.font-sel {
+  flex: 1;
+  background: #0d0d0d;
+  border: 1px solid #1e1e1e;
+  color: #666;
+  font-size: 10px;
+  padding: 5px 7px;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Sliders */
+.sl-group { margin-bottom: 11px; }
+.sl-group:last-child { margin-bottom: 0; }
+.sl-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+.sl-name { font-size: 10px; color: #4a4a4a; }
+.sl-val { font-size: 10px; color: #3a3a3a; font-variant-numeric: tabular-nums; }
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  background: #1e1e1e;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: #484848;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.slider::-webkit-slider-thumb:hover { background: #999; }
+.slider::-moz-range-thumb {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: #484848;
+  border: none; cursor: pointer;
+}
+
+/* Mode buttons */
+.mode-group { display: flex; gap: 4px; }
+.mode-btn {
+  flex: 1;
+  padding: 6px 4px;
+  background: #0d0d0d;
+  border: 1px solid #1c1c1c;
+  color: #3a3a3a;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.mode-btn:hover { color: #777; border-color: #2e2e2e; }
+.mode-btn.active { background: #1a1a1a; color: #bbb; border-color: #2e2e2e; }
+
+/* Export */
+.export-btn {
+  margin: 14px 16px;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid #1c1c1c;
+  color: #3a3a3a;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  cursor: pointer;
+  width: calc(100% - 32px);
+  transition: all 0.15s;
+}
+.export-btn:hover { border-color: #2e2e2e; color: #777; }
+
+.panel-spacer { flex: 1; }
+
+/* Stage */
+.stage {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  cursor: none;
+  background: #0a0a0a;
+}
+.stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Empty state */
+.empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none;
+  color: #222;
+}
+.empty .e-ico { font-size: 36px; opacity: 0.6; margin-bottom: 4px; }
+.empty p { font-size: 12px; }
+.empty .sub { font-size: 10px; color: #1a1a1a; }
+</style>
+</head>
+<body>
+
+<aside class="panel">
+  <div class="panel-header">
+    <h1>Pixel Mosaic</h1>
+  </div>
+
+  <div class="sec">
+    <div class="sec-label">Source</div>
+    <div class="tabs">
+      <button class="tab active" data-tab="image">Image</button>
+      <button class="tab" data-tab="video">Video</button>
+      <button class="tab" data-tab="text">Text</button>
+    </div>
+
+    <div class="tab-pane active" id="tab-image">
+      <div class="dz" id="img-dz">
+        <span class="dz-ico">🖼</span>
+        Drop image or click to browse
+      </div>
+      <input type="file" class="file-in" id="img-file" accept="image/*">
+      <div class="src-status" id="img-status">No image loaded</div>
+    </div>
+
+    <div class="tab-pane" id="tab-video">
+      <div class="dz" id="vid-dz">
+        <span class="dz-ico">🎬</span>
+        Drop video or click to browse
+      </div>
+      <input type="file" class="file-in" id="vid-file" accept="video/*">
+      <button class="sec-btn" id="webcam-btn">Use Webcam</button>
+      <div class="src-status" id="vid-status">No video loaded</div>
+    </div>
+
+    <div class="tab-pane" id="tab-text">
+      <textarea class="txt-area" id="txt-in" placeholder="Type something..."></textarea>
+      <div class="txt-opts">
+        <span class="clr-lbl">Text</span>
+        <input type="color" class="clr-pick" id="txt-color" value="#ffffff">
+        <span class="clr-lbl">BG</span>
+        <input type="color" class="clr-pick" id="txt-bg" value="#000000">
+        <select class="font-sel" id="font-sel">
+          <option value="sans-serif">Sans</option>
+          <option value="serif">Serif</option>
+          <option value="monospace">Mono</option>
+          <option value="Impact">Impact</option>
+          <option value="Georgia">Georgia</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-label">Grid</div>
+    <div class="sl-group">
+      <div class="sl-header"><span class="sl-name">Tile size</span><span class="sl-val" id="sv-tile">8px</span></div>
+      <input type="range" class="slider" id="sl-tile" min="4" max="24" value="8" step="1">
+    </div>
+    <div class="sl-group">
+      <div class="sl-header"><span class="sl-name">Aspect</span><span class="sl-val" id="sv-asp">3.0×</span></div>
+      <input type="range" class="slider" id="sl-asp" min="10" max="60" value="30" step="5">
+    </div>
+    <div class="sl-group">
+      <div class="sl-header"><span class="sl-name">Gap</span><span class="sl-val" id="sv-gap">2px</span></div>
+      <input type="range" class="slider" id="sl-gap" min="0" max="6" value="2" step="1">
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-label">Lens</div>
+    <div class="sl-group">
+      <div class="sl-header"><span class="sl-name">Radius</span><span class="sl-val" id="sv-lens">180px</span></div>
+      <input type="range" class="slider" id="sl-lens" min="40" max="420" value="180" step="10">
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-label">Mode</div>
+    <div class="mode-group">
+      <button class="mode-btn active" data-mode="lens">Lens</button>
+      <button class="mode-btn" data-mode="color">Color</button>
+      <button class="mode-btn" data-mode="mono">Mono</button>
+    </div>
+  </div>
+
+  <div class="panel-spacer"></div>
+  <button class="export-btn" id="export-btn">Export PNG</button>
+</aside>
+
+<main class="stage" id="stage">
+  <div class="empty" id="empty">
+    <div class="e-ico">⬡</div>
+    <p>Drop an image or video here</p>
+    <p class="sub">or use the panel to upload or type text</p>
+  </div>
+</main>
+
+<script>
+(function () {
+  const stage = document.getElementById('stage');
+  const empty = document.getElementById('empty');
+
+  // Output canvas
+  const outC = document.createElement('canvas');
+  stage.appendChild(outC);
+  const outX = outC.getContext('2d');
+
+  // Sampling canvases
+  const srcC = document.createElement('canvas');
+  const srcX = srcC.getContext('2d', { willReadFrequently: true });
+  const hirC = document.createElement('canvas');
+  const hirX = hirC.getContext('2d', { willReadFrequently: true });
+
+  // State
+  let source = null, sourceType = null;
+  let vidEl = null, textCanvas = null, webcamStream = null;
+  let running = false, rafId = null;
+  let colorMode = 'lens';
+
+  // Settings
+  let TILE_W = 8, ASP = 3.0, GAP = 2, LENS_R = 180;
+
+  // Layout
+  let outLogW = 0, outLogH = 0, curTileW = 8, curTileH = 24;
+  let mx = -9999, my = -9999, lensAlpha = 0;
+
+  // ── Setup ──────────────────────────────────────────────────────────────
+  function setup() {
+    const cw = stage.clientWidth, ch = stage.clientHeight;
+    if (!cw || !ch) return;
+    curTileW = Math.max(2, TILE_W);
+    curTileH = Math.max(2, Math.round(curTileW * ASP));
+    outLogW = Math.floor(cw / curTileW) * curTileW;
+    outLogH = Math.floor(ch / curTileH) * curTileH;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    outC.width = outLogW * dpr;
+    outC.height = outLogH * dpr;
+    outX.setTransform(dpr, 0, 0, dpr, 0, 0);
+    hirC.width = cw; hirC.height = ch;
+    srcC.width = Math.max(1, Math.floor(outLogW / curTileW));
+    srcC.height = Math.max(1, Math.round(srcC.width * ch / cw));
+    if (sourceType === 'text') buildTextCanvas();
+  }
+
+  let roTimer;
+  new ResizeObserver(() => {
+    if (running) { clearTimeout(roTimer); roTimer = setTimeout(setup, 150); }
+  }).observe(stage);
+
+  // ── Drawing ────────────────────────────────────────────────────────────
+  function drawPill(x, y, w, h) {
+    const r = w / 2;
+    outX.beginPath();
+    outX.moveTo(x + r, y);
+    outX.lineTo(x + w - r, y);
+    outX.quadraticCurveTo(x + w, y, x + w, y + r);
+    outX.lineTo(x + w, y + h - r);
+    outX.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    outX.lineTo(x + r, y + h);
+    outX.quadraticCurveTo(x, y + h, x, y + h - r);
+    outX.lineTo(x, y + r);
+    outX.quadraticCurveTo(x, y, x + r, y);
+    outX.closePath();
+    outX.fill();
+  }
+
+  function drawCover(ctx, src, dw, dh) {
+    const vw = src.videoWidth || src.naturalWidth || src.width;
+    const vh = src.videoHeight || src.naturalHeight || src.height;
+    if (!vw || !vh) return;
+    const scale = Math.max(dw / vw, dh / vh);
+    const sw = vw * scale, sh = vh * scale;
+    ctx.drawImage(src, (dw - sw) / 2, (dh - sh) / 2, sw, sh);
+  }
+
+  function draw() {
+    if (!running || !source) return;
+    if (sourceType === 'video' && source.readyState !== undefined && source.readyState < 2) return;
+
+    const isHovering = mx > -100;
+    const target = colorMode === 'color' ? 1 : (colorMode === 'lens' && isHovering ? 1 : 0);
+    lensAlpha += (target - lensAlpha) * 0.07;
+    lensAlpha = Math.max(0, Math.min(1, lensAlpha));
+
+    srcX.clearRect(0, 0, srcC.width, srcC.height);
+    drawCover(srcX, source, srcC.width, srcC.height);
+    const mosData = srcX.getImageData(0, 0, srcC.width, srcC.height).data;
+    const sw = srcC.width, sh = srcC.height;
+
+    const ow = outLogW, oh = outLogH;
+    const tW = curTileW, tH = curTileH;
+    const cols = Math.floor(ow / tW), rows = Math.floor(oh / tH);
+    if (!cols || !rows) return;
+
+    const rect = outC.getBoundingClientRect();
+    const scx = ow / rect.width;
+    const cmx = (mx - rect.left) * scx;
+    const cmy = (my - rect.top) * (oh / rect.height);
+    outX.clearRect(0, 0, ow, oh);
+    const lensR = LENS_R * scx;
+
+    // Hi-res crop (lens mode only)
+    let hirData = null, hirCropX = 0, hirCropY = 0, hirCropW = 0, hirCropH = 0, hsx = 1, hsy = 1;
+    if (colorMode === 'lens' && lensAlpha > 0.01) {
+      hirX.clearRect(0, 0, hirC.width, hirC.height);
+      drawCover(hirX, source, hirC.width, hirC.height);
+      hsx = hirC.width / ow; hsy = hirC.height / oh;
+      const pad = Math.max(tW, tH);
+      hirCropX = Math.max(0, Math.floor((cmx - lensR) * hsx) - pad);
+      hirCropY = Math.max(0, Math.floor((cmy - lensR) * hsy) - pad);
+      const right  = Math.min(hirC.width,  Math.ceil((cmx + lensR) * hsx) + pad);
+      const bottom = Math.min(hirC.height, Math.ceil((cmy + lensR) * hsy) + pad);
+      hirCropW = Math.max(1, right  - hirCropX);
+      hirCropH = Math.max(1, bottom - hirCropY);
+      hirData = hirX.getImageData(hirCropX, hirCropY, hirCropW, hirCropH).data;
+    }
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const cx = c * tW + tW / 2, cy = r * tH + tH / 2;
+        const mpy = Math.min(sh - 1, Math.floor(r * sh / rows));
+        const midx = (mpy * sw + c) * 4;
+        const mr = mosData[midx], mg = mosData[midx + 1], mb = mosData[midx + 2];
+        const lum = 0.299 * mr + 0.587 * mg + 0.114 * mb;
+        const mono = Math.min(255, Math.round((lum / 255) * 210));
+
+        let fr = mono, fg = mono, fb = mono, L = 0;
+
+        if (colorMode === 'color') {
+          // Fade in/out via lensAlpha for smooth mode transitions
+          fr = Math.round(mono + (mr - mono) * lensAlpha);
+          fg = Math.round(mono + (mg - mono) * lensAlpha);
+          fb = Math.round(mono + (mb - mono) * lensAlpha);
+          L = lensAlpha * (lum / 255);
+        } else if (colorMode === 'lens') {
+          const dist = Math.sqrt((cx - cmx) ** 2 + (cy - cmy) ** 2);
+          const t = Math.max(0, 1 - dist / lensR), ease = t * t * (3 - 2 * t);
+          L = ease * lensAlpha;
+          if (hirData && L > 0.003) {
+            const hpx = Math.min(hirC.width  - 1, Math.round(cx * hsx)) - hirCropX;
+            const hpy = Math.min(hirC.height - 1, Math.round(cy * hsy)) - hirCropY;
+            if (hpx >= 0 && hpy >= 0 && hpx < hirCropW && hpy < hirCropH) {
+              const hidx = (hpy * hirCropW + hpx) * 4;
+              fr = Math.round(mono + (hirData[hidx]     - mono) * L);
+              fg = Math.round(mono + (hirData[hidx + 1] - mono) * L);
+              fb = Math.round(mono + (hirData[hidx + 2] - mono) * L);
+            }
+          }
+        }
+
+        const innerW = tW - GAP * 2, innerH = tH - GAP * 2;
+        const grow = L * innerW * 0.18;
+        const tw = Math.max(1, Math.min(tW - 2, innerW + grow));
+        const th = Math.max(1, Math.min(tH - 2, innerH + grow * ASP * 0.5));
+        const tx = c * tW + GAP + (innerW - tw) / 2;
+        const ty = r * tH + GAP + (innerH - th) / 2;
+
+        outX.fillStyle = `rgb(${fr},${fg},${fb})`;
+        drawPill(tx, ty, tw, th);
+      }
+    }
+  }
+
+  function loop() { draw(); rafId = requestAnimationFrame(loop); }
+
+  function startRunning() {
+    empty.style.display = 'none';
+    if (!running) { running = true; setup(); }
+    if (!rafId) loop();
+  }
+
+  // ── Text canvas ────────────────────────────────────────────────────────
+  const txtIn     = document.getElementById('txt-in');
+  const txtColor  = document.getElementById('txt-color');
+  const txtBg     = document.getElementById('txt-bg');
+  const fontSel   = document.getElementById('font-sel');
+
+  function buildTextCanvas() {
+    const text = txtIn.value;
+    if (!text.trim()) return;
+    const cw = stage.clientWidth || 800, ch = stage.clientHeight || 600;
+    if (!textCanvas) textCanvas = document.createElement('canvas');
+    textCanvas.width = cw; textCanvas.height = ch;
+    const ctx = textCanvas.getContext('2d');
+
+    ctx.fillStyle = txtBg.value;
+    ctx.fillRect(0, 0, cw, ch);
+
+    const font = fontSel.value;
+    const lines = text.split('\n');
+    const n = Math.max(1, lines.length);
+
+    // Auto-size: start from height budget, then clamp to width
+    let fs = Math.floor(ch * 0.72 / n);
+    fs = Math.max(10, Math.min(fs, 400));
+    ctx.font = `bold ${fs}px ${font}`;
+    const maxW = Math.max(...lines.map(l => ctx.measureText(l || ' ').width));
+    if (maxW > cw * 0.92) { fs = Math.floor(fs * (cw * 0.92) / maxW); fs = Math.max(10, fs); }
+
+    ctx.font = `bold ${fs}px ${font}`;
+    ctx.fillStyle = txtColor.value;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const lh = fs * 1.25;
+    const totalH = lh * n;
+    lines.forEach((line, i) => {
+      ctx.fillText(line, cw / 2, (ch - totalH) / 2 + lh * (i + 0.5));
+    });
+
+    source = textCanvas;
+    sourceType = 'text';
+    startRunning();
+  }
+
+  let txtTimer;
+  const redrawText = () => { clearTimeout(txtTimer); txtTimer = setTimeout(buildTextCanvas, 200); };
+  txtIn.addEventListener('input', redrawText);
+  txtColor.addEventListener('input', redrawText);
+  txtBg.addEventListener('input', redrawText);
+  fontSel.addEventListener('change', buildTextCanvas);
+
+  // ── Image ──────────────────────────────────────────────────────────────
+  function loadImage(file) {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      source = img; sourceType = 'image';
+      setStatus('img-status', file.name);
+      startRunning();
+    };
+    img.src = url;
+  }
+
+  // ── Video ──────────────────────────────────────────────────────────────
+  function ensureVid() {
+    if (vidEl) return;
+    vidEl = document.createElement('video');
+    vidEl.muted = true; vidEl.loop = true;
+    vidEl.setAttribute('playsinline', '');
+  }
+
+  function stopWebcam() {
+    if (webcamStream) { webcamStream.getTracks().forEach(t => t.stop()); webcamStream = null; }
+    if (vidEl) vidEl.srcObject = null;
+  }
+
+  function loadVideo(file) {
+    stopWebcam(); ensureVid();
+    vidEl.src = URL.createObjectURL(file);
+    vidEl.load(); vidEl.play().catch(() => {});
+    source = vidEl; sourceType = 'video';
+    setStatus('vid-status', file.name);
+    startRunning();
+  }
+
+  document.getElementById('webcam-btn').addEventListener('click', async () => {
+    try {
+      stopWebcam(); ensureVid();
+      webcamStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+      vidEl.srcObject = webcamStream;
+      vidEl.play().catch(() => {});
+      source = vidEl; sourceType = 'video';
+      setStatus('vid-status', 'Webcam active');
+      startRunning();
+    } catch (e) { alert('Webcam: ' + e.message); }
+  });
+
+  function setStatus(id, text) {
+    const el = document.getElementById(id);
+    el.textContent = text; el.classList.add('on');
+  }
+
+  // ── Drop zone setup ────────────────────────────────────────────────────
+  function bindDrop(dzId, fileId, handler) {
+    const dz = document.getElementById(dzId);
+    const fi = document.getElementById(fileId);
+    dz.addEventListener('click', () => fi.click());
+    fi.addEventListener('change', e => { if (e.target.files[0]) handler(e.target.files[0]); });
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault(); dz.classList.remove('over');
+      if (e.dataTransfer.files[0]) handler(e.dataTransfer.files[0]);
+    });
+  }
+
+  bindDrop('img-dz', 'img-file', loadImage);
+  bindDrop('vid-dz', 'vid-file', loadVideo);
+
+  // Global drop onto stage
+  stage.addEventListener('dragover', e => e.preventDefault());
+  stage.addEventListener('drop', e => {
+    e.preventDefault();
+    const f = e.dataTransfer.files[0];
+    if (!f) return;
+    if (f.type.startsWith('image/')) { loadImage(f); switchTab('image'); }
+    else if (f.type.startsWith('video/')) { loadVideo(f); switchTab('video'); }
+  });
+
+  // ── Tabs ───────────────────────────────────────────────────────────────
+  function switchTab(t) {
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === 'tab-' + t));
+  }
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+  // ── Sliders ────────────────────────────────────────────────────────────
+  function bindSlider(slId, svId, fmt, cb) {
+    const sl = document.getElementById(slId), sv = document.getElementById(svId);
+    sl.addEventListener('input', () => { sv.textContent = fmt(+sl.value); cb(+sl.value); });
+  }
+  bindSlider('sl-tile', 'sv-tile', v => v + 'px',           v => { TILE_W = v; if (running) setup(); });
+  bindSlider('sl-asp',  'sv-asp',  v => (v/10).toFixed(1)+'×', v => { ASP = v/10; if (running) setup(); });
+  bindSlider('sl-gap',  'sv-gap',  v => v + 'px',           v => { GAP = v; });
+  bindSlider('sl-lens', 'sv-lens', v => v + 'px',           v => { LENS_R = v; });
+
+  // ── Mode buttons ───────────────────────────────────────────────────────
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      colorMode = b.dataset.mode;
+      document.querySelectorAll('.mode-btn').forEach(x => x.classList.toggle('active', x === b));
+    });
+  });
+
+  // ── Mouse ──────────────────────────────────────────────────────────────
+  stage.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  stage.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
+
+  // ── Export ─────────────────────────────────────────────────────────────
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.download = 'mosaic.png'; a.href = outC.toDataURL(); a.click();
+  });
+
+  // ── Visibility ─────────────────────────────────────────────────────────
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+    else if (running && !rafId) loop();
+  });
+
+  setup();
+})();
+</script>
+</body>
+</html>
